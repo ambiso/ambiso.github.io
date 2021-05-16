@@ -9,7 +9,7 @@ build_search_index = true
 
 theme = "after-dark"
 
-output_dir = "public"
+output_dir = "docs"
 
 taxonomies = [
     # You can enable/disable RSS

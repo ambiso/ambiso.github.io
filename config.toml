@@ -14,8 +14,9 @@ theme = "after-dark"
 
 taxonomies = [
     # You can enable/disable RSS
-    {name = "categories", feed = true},
-    {name = "tags", feed = true},
+    {name = "crypto", feed = true},
+    {name = "security", feed = true},
+    {name = "algorithms", feed = true},
 ]
 
 [markdown]

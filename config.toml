@@ -14,9 +14,7 @@ theme = "after-dark"
 
 taxonomies = [
     # You can enable/disable RSS
-    {name = "crypto", feed = true},
-    {name = "security", feed = true},
-    {name = "algorithms", feed = true},
+    {name = "tags", feed = true},
 ]
 
 [markdown]
@@ -31,6 +29,6 @@ after_dark_title = "ambiso"
 
 after_dark_menu = [
     {url = "$BASE_URL", name = "Home"},
-    # {url = "$BASE_URL/categories", name = "Categories"},
-    # {url = "$BASE_URL/tags", name = "Tags"},
+    {url = "$BASE_URL/categories", name = "Categories"},
+    {url = "$BASE_URL/tags", name = "Tags"},
 ]

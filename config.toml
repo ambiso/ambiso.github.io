@@ -1,6 +1,9 @@
 # The URL the site will be built for
 base_url = "https://ambiso.github.io"
 
+title = "ambiso's blog"
+description = "my excursion into cryptography, algorithms and security"
+
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
 

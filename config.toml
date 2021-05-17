@@ -9,8 +9,6 @@ build_search_index = true
 
 theme = "after-dark"
 
-output_dir = "docs"
-
 taxonomies = [
     # You can enable/disable RSS
     {name = "categories", feed = true},

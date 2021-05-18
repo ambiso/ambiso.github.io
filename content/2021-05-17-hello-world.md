@@ -7,4 +7,4 @@ categories=["misc"]
 +++
 This is a tiny test.
 
-Testing some math: $$\int_0^1 e^x\mathrm{d}x.$$
+Testing some math: $$\int_0^1 e^x\ \mathrm{d}x.$$

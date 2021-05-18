@@ -7,4 +7,4 @@ tags=["misc"]
 +++
 This is a tiny test.
 
-Testing some math: $\int_0^1 e^x$.
+Testing some math: $$\int_0^1 e^x$$.

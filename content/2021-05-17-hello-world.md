@@ -3,7 +3,7 @@ title = "Hello World"
 slug = "hello-world"
 summary = "A test"
 [taxonomies]
-tags=["misc"]
+categories=["misc"]
 +++
 This is a tiny test.
 

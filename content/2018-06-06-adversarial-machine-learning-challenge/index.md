@@ -1,7 +1,7 @@
 +++
 title = "Generating Adversarial Examples - Challenge Writeup"
 [taxonomies]
-categories = ["writeup", "machinelearning"]
+categories = ["writeup", "machine learning"]
 +++
 
 "Jodlgang" is a challenge at the 2018 FAUST CTF.

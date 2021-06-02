@@ -14,7 +14,7 @@ One way to obtain better cache locality is to use space filling curves.
 </iframe>
 
 I made this visualization using [WGLMakie](https://github.com/JuliaPlots/WGLMakie.jl) and [JSServe.jl](https://github.com/SimonDanisch/JSServe.jl) in [Julia](https://julialang.org/).
-We can convert between points in $$\{0,\ldots,2^{3 \cdot n}-1\}$$ and $$\left(\{0,\ldots,2^n\}\right)^3$$ by interleaving the bits.
+We can convert between points in \\(\\{0,\ldots,2^{3 \cdot n}-1\\}\\) and \\(\left(\\{0,\ldots,2^n-1\\}\right)^3\\) by interleaving the bits.
 This is described in more detail on the [Wikipedia](https://en.wikipedia.org/wiki/Z-order_curve#Coordinate_values) page.
 The `zoc2p` function implements this mapping.
 
@@ -26,8 +26,8 @@ function zoc2p(zoc, digits_per_coordinate, dim)
     end
 end
 ```
-Here, `dim` is the number of dimensions of the z-order curve and `digits_per_coordinate` corresponds to $$n$$.
-We then enumerate all points in $$\{0,\ldots,2^{3 \cdot n}-1\}$$ and send them through the function to obtain the corresponding point in 3D space:
+Here, `dim` is the number of dimensions of the z-order curve and `digits_per_coordinate` corresponds to \\(n\\).
+We then enumerate all points in \\(\\{0,\ldots,2^{3 \cdot n}-1\\}\\) and send them through the function to obtain the corresponding point in 3D space:
 
 ```julia
 v = vcat([zoc2p(i, digits_per_coordinate, dim)' for i=0:2^(digits_per_coordinate*dim)-1]...)

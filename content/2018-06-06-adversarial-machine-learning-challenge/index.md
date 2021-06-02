@@ -1,5 +1,5 @@
 +++
-title = "Generating Adversarial Examples - Challenge Writeup"
+title = "Generating Adversarial Examples - Challenge Writeup (slides)"
 [taxonomies]
 categories = ["writeup", "machine learning"]
 +++

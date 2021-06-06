@@ -170,4 +170,4 @@ do_break(b'CSCG{')
 
 # See Also
 
-- https://www.lothar.com/blog/54-spake2-random-elements/ ([archived](https://web.archive.org/web/20210226042526/https://www.lothar.com/blog/54-spake2-random-elements/))
+- [https://www.lothar.com/blog/54-spake2-random-elements/](https://www.lothar.com/blog/54-spake2-random-elements/) ([archived](https://web.archive.org/web/20210226042526/https://www.lothar.com/blog/54-spake2-random-elements/))

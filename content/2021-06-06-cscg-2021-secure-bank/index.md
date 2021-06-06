@@ -21,7 +21,7 @@ run_protocol(pin, msg)
 
 The protocol that the server runs is executed with a message and a PIN.
 The protocol resembles a password based authenticated key exchange (PAKE) 
-as a shared secret that is bound to the PIN is obtained.
+since a shared secret that is bound to the PIN is obtained.
 Normally, we would have to know the PIN to compute the shared secret.
 However, a flaw lets us guess and check every possible PIN.
 The shared secret is then used to encrypt the challenge message,

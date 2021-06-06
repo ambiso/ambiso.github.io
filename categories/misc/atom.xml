@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+	<title>ambiso&#x27;s blog - misc</title>
+	<subtitle>excursions into cryptography, algorithms and security</subtitle>
+	<link href="https://ambiso.github.io/categories/misc/atom.xml" rel="self" type="application/atom+xml"/>
+  <link href="https://ambiso.github.io"/>
+	<generator uri="https://www.getzola.org/">Zola</generator>
+	<updated>2021-05-30T00:00:00+00:00</updated>
+	<id>https://ambiso.github.io/categories/misc/atom.xml</id>
+	<entry xml:lang="en">
+		<title>Z-Order Curve Visualization</title>
+		<published>2021-05-30T00:00:00+00:00</published>
+		<updated>2021-05-30T00:00:00+00:00</updated>
+		<link href="https://ambiso.github.io/z-order-curve/" type="text/html"/>
+		<id>https://ambiso.github.io/z-order-curve/</id>
+		<content type="html">&lt;p&gt;A visualization of a 3D &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Z-order_curve&quot;&gt;Z-order curve&lt;&#x2F;a&gt;.
+Doesn&#x27;t really work on mobile - use the mouse to rotate the view.&lt;&#x2F;p&gt;
+&lt;p&gt;A friend of mine asked me about optimizing matrix multiplication.
+One way to obtain better cache locality is to use space filling curves.&lt;&#x2F;p&gt;
+&lt;iframe src=&quot;zoc.html&quot; width=&quot;800&quot; height=&quot;800&quot;&gt;
+&lt;&#x2F;iframe&gt;
+&lt;p&gt;I made this visualization using &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;JuliaPlots&#x2F;WGLMakie.jl&quot;&gt;WGLMakie&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;SimonDanisch&#x2F;JSServe.jl&quot;&gt;JSServe.jl&lt;&#x2F;a&gt; in &lt;a href=&quot;https:&#x2F;&#x2F;julialang.org&#x2F;&quot;&gt;Julia&lt;&#x2F;a&gt;.
+We can convert between points in \(\{0,\ldots,2^{3 \cdot n}-1\}\) and \(\left(\{0,\ldots,2^n-1\}\right)^3\) by interleaving the bits.
+This is described in more detail on the &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Z-order_curve#Coordinate_values&quot;&gt;Wikipedia&lt;&#x2F;a&gt; page.
+The &lt;code&gt;zoc2p&lt;&#x2F;code&gt; function implements this mapping.&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-julia&quot; data-lang=&quot;julia&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;function &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;zoc2p&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(zoc, digits_per_coordinate, dim)
+    p = digits(zoc, base=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;, pad=dim * digits_per_coordinate)
+    mapslices(reshape(p, :, digits_per_coordinate); dims=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;do&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; x
+        sum(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;^(i-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;) * x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(i,x) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;in&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; enumerate(x))
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;end
+end
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Here, &lt;code&gt;dim&lt;&#x2F;code&gt; is the number of dimensions of the z-order curve and &lt;code&gt;digits_per_coordinate&lt;&#x2F;code&gt; corresponds to \(n\).
+We then enumerate all points in \(\{0,\ldots,2^{3 \cdot n}-1\}\) and send them through the function to obtain the corresponding point in 3D space:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-julia&quot; data-lang=&quot;julia&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;v = vcat([zoc&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;p(i, digits_per_coordinate, dim)&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; i=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;^(digits_per_coordinate*dim)-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;]...)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Here&#x27;s the full plotting function:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-julia&quot; data-lang=&quot;julia&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;function &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;plt&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;()
+    set_theme!(resolution=(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;800&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;800&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;))
+
+    app = App() &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;do&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; s::Session
+        digits_per_coordinate = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;3
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;        dim = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;3
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;        v = vcat([zoc&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;p(i, digits_per_coordinate, dim)&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; i=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;^(digits_per_coordinate*dim)-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;]...)
+
+        xs = v[:, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;]
+        ys = v[:, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;]
+        zs = v[:, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;]
+        progress = (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;:length(xs)-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;).&#x2F;(length(xs)-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;)
+
+        fig, ax, splot = lines(xs, ys, zs, linewidth=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;50&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;, color=progress, colormap=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;:rainbow&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;)
+
+        DOM.div(fig)
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;end
+
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;    page = Page(offline=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;, exportable=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;)
+    page_html = sprint() &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;do&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; io
+        show(io, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;MIME&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;text&#x2F;html&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;(), page)
+        show(io, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;MIME&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;text&#x2F;html&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;(), app)
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;end
+
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;    write(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;export&#x2F;index.html&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;, page_html)
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;code&gt;JSServe&lt;&#x2F;code&gt; then allows us to export the plot as a static webpage, and it&#x27;s the one you see above embedded as an &lt;code&gt;iframe&lt;&#x2F;code&gt;!&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Skills to Learn</title>
+		<published>2021-05-18T00:00:00+00:00</published>
+		<updated>2021-05-18T00:00:00+00:00</updated>
+		<link href="https://ambiso.github.io/skills/" type="text/html"/>
+		<id>https://ambiso.github.io/skills/</id>
+		<content type="html">&lt;p&gt;I&#x27;m starting here a list of technologies that I&#x27;m interested in.
+It&#x27;s essentially a slightly less cluttered &amp;quot;Read it Later&amp;quot; list.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Containers
+&lt;ul&gt;
+&lt;li&gt;Learn more about &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;opencontainers&#x2F;runtime-spec&#x2F;blob&#x2F;master&#x2F;spec.md&quot;&gt;OCI Runtimes&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kubernetes.io&#x2F;docs&#x2F;tutorials&#x2F;kubernetes-basics&#x2F;&quot;&gt;k8s&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;Distributed Systems and Protocols
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=bzja9fQWzdA&quot;&gt;TCP in Depth&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;BPF &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;iovisor&#x2F;bcc&quot;&gt;1&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Paxos &lt;a href=&quot;https:&#x2F;&#x2F;lamport.azurewebsites.net&#x2F;pubs&#x2F;paxos-simple.pdf&quot;&gt;1&lt;&#x2F;a&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=SRsK-ZXTeZ0&quot;&gt;2&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;raft.github.io&#x2F;&quot;&gt;Raft&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=GyCL8AJUhww&quot;&gt;OAuth and OIDC&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;eprint.iacr.org&#x2F;2016&#x2F;046.pdf&quot;&gt;Universal Composability&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;eprint.iacr.org&#x2F;2005&#x2F;176.pdf&quot;&gt;HMQV&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=fBKCbhX-dXI&quot;&gt;Proof of Stake Protocols&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Hello World</title>
+		<published>2021-05-17T00:00:00+00:00</published>
+		<updated>2021-05-17T00:00:00+00:00</updated>
+		<link href="https://ambiso.github.io/hello-world/" type="text/html"/>
+		<id>https://ambiso.github.io/hello-world/</id>
+		<content type="html">&lt;p&gt;This is a tiny test.&lt;&#x2F;p&gt;
+&lt;p&gt;Testing some math: $$\int_0^1 e^x\ \mathrm{d}x.$$&lt;&#x2F;p&gt;
+</content>
+	</entry>
+</feed>

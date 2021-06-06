@@ -30,7 +30,8 @@ The client is supposed to send back the challenge.
 In short: if we can obtain the random challenge from a run of the protocol we win✨.
 
 The challenge description also advises us not to try an online brute-force attack.
-To enforce this we actually have to recover the challenge twice with different random PINs from a protocol run.
+To enforce this we actually have to recover the challenge twice from two consecutive protocol runs,
+where each has a randomly chosen PIN.
 That's \\(10000^2 = 100\\) million possible combinations!
 Assuming 30 online guesses per second it would take 38.58 days to perform this many guesses. 
 Even with 100 million guesses we only have a

@@ -114,6 +114,13 @@ Voilà! Now we need 5000 _offline_ guesses in expectation to recover the correct
 Therefore this completely breaks the security of the protocol:
 a PAKE should prevent an adversary from guessing offline.
 
+The flaw we discovered is analogous to one that can occur "in the real world" with SPAKE2
+and the challenge description hints at this: "The **SP** b**A**n**K** **E2** introduced a new protocol [...]".
+I've also found a blog post detailing this issue [here](https://www.lothar.com/blog/54-spake2-random-elements/).
+It also describes how one could pick arbitrary public parameters for which nobody knows the discrete logarithm.
+This is possible, since the server never actually uses the discrete log in the protocol.
+Therefore it is sufficient to have a single public value that everyone trusts - but nobody has its discrete log.
+
 # Full Exploit
 
 ```python

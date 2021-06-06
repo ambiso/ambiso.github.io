@@ -110,7 +110,9 @@ we can derive a symmetric key to decrypt the received ciphertext.
 We can check whether the key is correct by comparing the decrypted text 
 against the known plaintext prefix "Challenge: ".
 
-Voilà! Now we need 5000 guesses in expectation to recover the correct PIN!
+Voilà! Now we need 5000 _offline_ guesses in expectation to recover the correct PIN!
+Therefore this completely breaks the security of the protocol:
+a PAKE should prevent an adversary from guessing offline.
 
 # Full Exploit
 

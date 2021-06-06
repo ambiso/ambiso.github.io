@@ -31,7 +31,8 @@ In short: if we can obtain the random challenge from a run of the protocol we wi
 
 The challenge description also advises us not to try an online brute-force attack.
 To enforce this we actually have to recover the challenge twice with different random PINs from a protocol run.
-That's \\(10000^2 = 100\\) million possible combinations! - in expectation at 30 online guesses per second it would take 38.58 days to perform this many guesses. Even with 100 million guesses we only have a
+That's \\(10000^2 = 100\\) million possible combinations!
+At 30 online guesses per second it would take 38.58 days to perform this many guesses. Even with 100 million guesses we only have a
 probability of success of \\(1-(1-\frac{1}{10000^2})^{10^8}\approx 0.63 = 63\\%\\).
 Therefore it seems much more economical (and fun!) to actually try and break the challenge.
 

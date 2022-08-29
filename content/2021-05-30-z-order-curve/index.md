@@ -1,7 +1,7 @@
 +++
 title = "Z-Order Curve Visualization"
 [taxonomies]
-categories = ["misc"]
+categories = ["misc", "project"]
 +++
 
 A visualization of a 3D [Z-order curve](https://en.wikipedia.org/wiki/Z-order_curve).

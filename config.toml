@@ -2,10 +2,14 @@
 base_url = "https://ambiso.github.io"
 
 title = "ambiso's blog"
-description = "excursions into cryptography, algorithms and security"
+description = "excursions into security, cryptography and math"
 
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
+
+# RSS
+generate_feed = true
+# feed_filename = "feed"
 
 # Whether to build a search index to be used later on by a JavaScript library
 build_search_index = false
@@ -25,7 +29,7 @@ highlight_code = true
 [extra]
 # Put all your custom variables here
 
-after_dark_title = "ambiso"
+after_dark_title = "ambiso's blog"
 
 after_dark_menu = [
     {url = "$BASE_URL", name = "Home"},

@@ -14,3 +14,5 @@ Luckily we are given the neural network architecture and its weight that are use
 This means we can use backpropagation to generate an image that look like a desired person - at least to the neural network.
 
 More in the [presentation](./faustctf-2018-jodlgang.pdf) I made on this challenge.
+
+<iframe src="./faustctf-2018-jodlgang.pdf" style="width: 100%; aspect-ratio: 16/9;"></iframe>

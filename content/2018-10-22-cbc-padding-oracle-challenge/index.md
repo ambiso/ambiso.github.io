@@ -4,4 +4,4 @@ title = "CBC Padding Oracle Attack (slides)"
 categories = ["writeup", "crypto"]
 +++
 
-Here's the [slides](./meepwnctf-2018-esor.pdf) to the MeePwn 2018 "esor" challenge.
+<iframe src="./meepwnctf-2018-esor.pdf" style="width: 100%; aspect-ratio: 16/9;"></iframe>

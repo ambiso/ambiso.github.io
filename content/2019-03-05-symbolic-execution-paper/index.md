@@ -4,4 +4,6 @@ title = "Symbolic Execution (seminar paper)"
 categories = ["verification"]
 +++
 
-Here's my [seminar paper](./semsec-2019.pdf) on symbolic execution.
+A [seminar paper](./semsec-2019.pdf) on symbolic execution.
+
+<iframe src="./semsec-2019.pdf" style="width: 100%; aspect-ratio: 100/141;"></iframe>

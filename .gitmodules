@@ -1,3 +1,4 @@
 [submodule "themes/after-dark"]
 	path = themes/after-dark
-	url = https://github.com/ambiso/after-dark.git
+	url = git@github.com:ambiso/after-dark.git
+

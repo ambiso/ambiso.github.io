@@ -1,5 +1,5 @@
 +++
-title = "Using Bitwarden PIN? Might as well use notepad.exe..."
+title = "Bitwarden PINs can be brute-forced"
 [taxonomies]
 categories = ["crypto"]
 +++

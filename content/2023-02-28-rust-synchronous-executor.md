@@ -1,6 +1,5 @@
 +++
 title = "Rust Synchronous Executor"
-draft = true
 [taxonomies]
 categories = ["rust"]
 +++

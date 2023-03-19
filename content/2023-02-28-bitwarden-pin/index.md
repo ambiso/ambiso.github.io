@@ -4,8 +4,24 @@ title = "Bitwarden PINs can be brute-forced"
 categories = ["crypto"]
 +++
 
-<div style="margin: 0 2% 0 2%; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background-color: #3f3f3f; color: white; padding: 0.5em 0.5em 0.25em; font-weight: bold;">Abstract</div>
-<div style="margin: 0 2% 1em 2%; border-radius: 10px; border-top-left-radius: 0; border-top-right-radius: 0; background-color: #111; padding: 0.25em 0.5em 0.5em;">
+<div style="margin: 0 1% 0 1%; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background-color: #9f3f3f; color: white; padding: 0.5em 0.5em 0.25em; font-weight: bold;">Update</div>
+<div style="margin: 0 1% 1em 1%; border-radius: 10px; border-top-left-radius: 0; border-top-right-radius: 0; background-color: #111; padding: 0.25em 0.5em 0.5em;">
+Since the writing of this post Bitwarden has updated their <a href="https://bitwarden.com/help/unlock-with-pin/">documentation about the PIN feature</a>:
+
+It now warns:
+> Using a PIN can weaken the level of encryption that protects your application's local vault database. If you are worried about attack vectors that involve your device's local data being compromised, you may want to reconsider the convenience of using a PIN.
+
+You can view the previous version <a href="https://web.archive.org/web/20230124121851/https://bitwarden.com/help/unlock-with-pin/">here</a>.
+
+Unfortunately I could not find any changes to the client (as of 2023-03-19), that would warn a user about this, as they're setting the feature up. Maybe I should just submit a PR myself.
+
+I also don't know if any of this applies to the Windows or MacOS clients, you may test it for yourself.
+
+Also don't freak out about this too much, Bitwarden is (as far as I can tell) a good password manager, and you should definitely continue to use it; I just wish they'd warn about the risks of using the PIN feature more clearly.
+</div>
+
+<div style="margin: 0 1% 0 1%; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background-color: #3f3f3f; color: white; padding: 0.5em 0.5em 0.25em; font-weight: bold;">Abstract</div>
+<div style="margin: 0 1% 1em 1%; border-radius: 10px; border-top-left-radius: 0; border-top-right-radius: 0; background-color: #111; padding: 0.25em 0.5em 0.5em;">
 If an attacker can get access to the encrypted vault data stored locally on your device,
 and you've configured a Bitwarden PIN as in the image below, the attacker can brute-force the PIN and gain access to your vault's master key.
 

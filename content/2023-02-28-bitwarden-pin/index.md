@@ -8,12 +8,12 @@ categories = ["crypto"]
 <div style="margin: 0 1% 1em 1%; border-radius: 10px; border-top-left-radius: 0; border-top-right-radius: 0; background-color: #111; padding: 0.25em 0.5em 0.5em;">
 Since the writing of this post Bitwarden has updated their <a href="https://bitwarden.com/help/unlock-with-pin/">documentation about the PIN feature</a>:
 
-It now warns:
+It now warns rather prominently:
 > Using a PIN can weaken the level of encryption that protects your application's local vault database. If you are worried about attack vectors that involve your device's local data being compromised, you may want to reconsider the convenience of using a PIN.
 
-You can view the previous version <a href="https://web.archive.org/web/20230124121851/https://bitwarden.com/help/unlock-with-pin/">here</a>.
+You can view the previous versions <a href="https://web.archive.org/web/20230124121851/https://bitwarden.com/help/unlock-with-pin/">here</a>. The warning seems to exist since September 2022, but back then it was buried at the very bottom of the page.
 
-Unfortunately I could not find any changes to the client (as of 2023-03-19), that would warn a user about this, as they're setting the feature up. Maybe I should just submit a PR myself.
+Unfortunately I could not find any changes to the client (as of 2023-03-19), that would warn a user about this (with e.g. a modal warning), as they're setting the feature up. Maybe I should just submit a PR myself.
 
 I also don't know if any of this applies to the Windows or MacOS clients, you may test it for yourself.
 

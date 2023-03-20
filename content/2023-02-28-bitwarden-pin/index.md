@@ -4,6 +4,17 @@ title = "Bitwarden PINs can be brute-forced"
 categories = ["crypto"]
 +++
 
+<div style="margin: 0 1% 0 1%; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background-color: #3f3f9f; color: white; padding: 0.5em 0.5em 0.25em; font-weight: bold;">Addressing Misconceptions</div>
+<div style="margin: 0 1% 1em 1%; border-radius: 10px; border-top-left-radius: 0; border-top-right-radius: 0; background-color: #111; padding: 0.25em 0.5em 0.5em;">
+> Obviously a PIN is brute-forceable
+
+No, it's not obvious: there's several secure implementation options that prevent a brute-force attack in the device-local data access scenario. See <a href="#mitigation-and-remediation">Mitigation and Remediation</a> options 2 and 3.
+
+> I might as well install a keylogger
+
+This is a different attack scenario. If I throw away my computer, or you steal it in its powered off state, a keylogger won't help you since I won't be entering my password again.
+</div>
+
 <div style="margin: 0 1% 0 1%; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background-color: #9f3f3f; color: white; padding: 0.5em 0.5em 0.25em; font-weight: bold;">Update</div>
 <div style="margin: 0 1% 1em 1%; border-radius: 10px; border-top-left-radius: 0; border-top-right-radius: 0; background-color: #111; padding: 0.25em 0.5em 0.5em;">
 Since the writing of this post Bitwarden has updated their <a href="https://bitwarden.com/help/unlock-with-pin/">documentation about the PIN feature</a>:
@@ -17,7 +28,7 @@ Unfortunately I could not find any changes to the client (as of 2023-03-19), tha
 
 I also don't know if any of this applies to the Windows or MacOS clients, you may test it for yourself.
 
-Also don't freak out about this too much, Bitwarden is (as far as I can tell) a good password manager, and you should definitely continue to use it; I just wish they'd warn about the risks of using the PIN feature more clearly.
+Also don't freak out about this too much. As far as I can tell <b>Bitwarden is a good password manager</b>, and you should definitely continue to use it. (Though maybe reconsider whether you want to use the PIN feature if you have it enabled as in the configuration below. (e.g. ensure you have full-disk encryption)) I just wish they'd warn about the risks of using the PIN feature more clearly.
 </div>
 
 <div style="margin: 0 1% 0 1%; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background-color: #3f3f3f; color: white; padding: 0.5em 0.5em 0.25em; font-weight: bold;">Abstract</div>
@@ -117,7 +128,8 @@ Disadvantages:
 
 ## 3. Rely on some hardware security magic
 
-Do the above (no. 2) in a Trusted Execution Environment, Intel SGX or something alike.
+Do the above (no. 2) in a Trusted Execution Environment, Intel SGX, TPM or something alike.
+Example implementations include [Windows Hello](https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/hello-why-pin-is-better-than-password) which Bitwarden also has [support for](https://bitwarden.com/blog/introducing-desktop-biometrics/) (I have not analyzed this feature at all, however).
 
 Advantages:
 - Would likely work offline

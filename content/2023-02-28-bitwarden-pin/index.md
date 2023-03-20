@@ -27,7 +27,7 @@ and you've configured a Bitwarden PIN as in the image below, the attacker can br
 
 Effectively, Bitwarden may just as well store the data in plain text on disk.
 
-Bitwarden does not warn about this risk.
+Bitwarden clients do not warn about this risk.
 </div>
 
 The Bitwarden desktop client and browser extensions allow the user to unlock Bitwarden with a PIN.

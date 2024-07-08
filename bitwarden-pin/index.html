@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+      <title>Bitwarden PINs can be brute-forced - ambiso&#x27;s blog</title>
+
+      
+        
+          <link rel="alternate" type="application/atom+xml" title="RSS" href="https://ambiso.github.io/atom.xml">
+        
+          <link rel="alternate" type="application/rss+xml" title="RSS" href="https://ambiso.github.io/rss.xml">
+        
+      
+
+
+      
+          <link rel="stylesheet" href="https://ambiso.github.io/site.css">
+          
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+          
+      
+
+      
+      
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/slideout/1.0.1/slideout.min.js" defer></script>
+          
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous" defer>
+
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/mathtex-script-type.min.js" integrity="sha384-zWYbd0NBwgTsgIdFKVprSfTh1mbMPe5Hz1X3yY4Sd1h/K1cQoUe36OGwAGz/PcDy" crossorigin="anonymous"></script>
+              
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"
+                  onload="renderMathInElement(document.body);"></script>
+              
+          
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+        
+    
+        
+                
+                    <header>
+                        <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;ambiso.github.io">
+                                <span itemprop="name">Home
+                                </span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;ambiso.github.io&#x2F;categories">
+                                <span itemprop="name">Categories
+                                </span></a>
+                        
+                        </nav>
+                    </header>
+                
+            
+    
+
+<article itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+        <h1 itemprop="headline">Bitwarden PINs can be brute-forced</h1>
+        <span class="muted">
+    <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>8 minute read</span>
+    <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2023-02-28
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <div style="margin: 0 1% 0 1%; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background-color: #3f3f9f; color: white; padding: 0.5em 0.5em 0.25em; font-weight: bold;">Addressing Misconceptions</div>
+<div style="margin: 0 1% 1em 1%; border-radius: 10px; border-top-left-radius: 0; border-top-right-radius: 0; background-color: #111; padding: 0.25em 0.5em 0.5em;">
+> Obviously a PIN is brute-forceable
+<p>No, it's not obvious: there's several secure implementation options that prevent a brute-force attack in the device-local data access scenario. See <a href="#mitigation-and-remediation">Mitigation and Remediation</a> options 2 and 3.</p>
+<blockquote>
+<p>I might as well install a keylogger</p>
+</blockquote>
+<p>This is a different attack scenario. If I throw away my computer, or you steal it in its powered off state, a keylogger won't help you since I won't be entering my password again.</p>
+</div>
+<div style="margin: 0 1% 0 1%; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background-color: #9f3f3f; color: white; padding: 0.5em 0.5em 0.25em; font-weight: bold;">Update</div>
+<div style="margin: 0 1% 1em 1%; border-radius: 10px; border-top-left-radius: 0; border-top-right-radius: 0; background-color: #111; padding: 0.25em 0.5em 0.5em;">
+Since the writing of this post Bitwarden has updated their <a href="https://bitwarden.com/help/unlock-with-pin/">documentation about the PIN feature</a>:
+<p>It now warns rather prominently:</p>
+<blockquote>
+<p>Using a PIN can weaken the level of encryption that protects your application's local vault database. If you are worried about attack vectors that involve your device's local data being compromised, you may want to reconsider the convenience of using a PIN.</p>
+</blockquote>
+<p>You can view the previous versions <a href="https://web.archive.org/web/20230124121851/https://bitwarden.com/help/unlock-with-pin/">here</a>. The warning seems to exist since September 2022, but back then it was buried at the very bottom of the page.</p>
+<p>Unfortunately I could not find any changes to the client (as of 2023-03-19), that would warn a user about this (with e.g. a modal warning), as they're setting the feature up. Maybe I should just submit a PR myself.</p>
+<p>I also don't know if any of this applies to the Windows or MacOS clients, you may test it for yourself.</p>
+<p>Also don't freak out about this too much. As far as I can tell <b>Bitwarden is a good password manager</b>, and you should definitely continue to use it. (Though maybe reconsider whether you want to use the PIN feature if you have it enabled as in the configuration below. (e.g. ensure you have full-disk encryption)) I just wish they'd warn about the risks of using the PIN feature more clearly.</p>
+</div>
+<div style="margin: 0 1% 0 1%; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background-color: #3f3f3f; color: white; padding: 0.5em 0.5em 0.25em; font-weight: bold;">Abstract</div>
+<div style="margin: 0 1% 1em 1%; border-radius: 10px; border-top-left-radius: 0; border-top-right-radius: 0; background-color: #111; padding: 0.25em 0.5em 0.5em;">
+If an attacker can get access to the encrypted vault data stored locally on your device,
+and you've configured a Bitwarden PIN as in the image below, the attacker can brute-force the PIN and gain access to your vault's master key.
+<p>Effectively, Bitwarden may just as well store the data in plain text on disk.</p>
+<p>Bitwarden clients do not warn about this risk.</p>
+</div>
+<p>The Bitwarden desktop client and browser extensions allow the user to unlock Bitwarden with a PIN.
+This PIN can be set-up per device after logging in to an account using the master password.
+All information pertaining to the PIN is stored locally on the device.
+It cannot be used to sign in to an account (read: authenticate with the Bitwarden backend server), but it can be used to obtain access to the vault data, that has been synced and stored locally in encrypted form.</p>
+<p>Let's now assume that the user enables the PIN unlock and configures Bitwarden so that it doesn't require the master password on restart.</p>
+<div style="display: flex; width: 100%; justify-content: space-around;">
+<img src="pin_config.webp" alt="PIN Config Window with a low-entropy PIN entered into the PIN field and the 'Lock with master password on restart' option unchecked" style="width: 20em; margin-top: 1em; margin-bottom: 1em;"/>
+</div>
+<p>Then a secret derived only from the user's email and PIN will be used to encrypt the master vault key.
+It stores roughly</p>
+<p>\[c = \mathrm{Encrypt}_{\mathcal{K}(\mathrm{email},\ \mathrm{PIN})}(\text{master key})\]</p>
+<p>on disk, where \(\mathcal{K}\) is a key derivation function.
+This means if an attacker can at any point gain access to the encrypted vault data stored on the device the attacker can brute-force the PIN:
+the attacker can check whether decryption of \(c\) succeeds using the guessed PIN.
+This brute-force will very likely be successful, since PINs are usually very low-entropy.
+Now, granted, the key derivation function is PBKDF2 with 100000 iterations (+ HKDF), but that won't help with a 4 digit pin.</p>
+<p>Bitwarden seems to be aware that PINs are low-entropy and that many PIN guesses are a problem: the client allows only 5 PIN unlock attempts.
+However this 5 guesses limit is enforced completely within the client's logic: it relies on the attacker using the official Bitwarden client.
+Instead, an attacker can directly attack the ciphertext \(c\) above, trying different PINs until the ciphertext successfully decrypts.</p>
+<h1 id="exploitation">Exploitation</h1>
+<video width="100%" controls>
+<source src="exploit_demo.webm" type="video/webm">
+<meta itemprop="description" content="Video showing bitwarden. User then sets the pin 2345. The vault is locked and then bitwarden is quit. In the terminal the exploit program is run, which after a short while outputs the PIN 2345.">
+</video>
+<p>A proof of concept exploit for Linux only can be found <a href="https://github.com/ambiso/bitwarden-pin">here</a>.
+It uses the fact that the encryption is authenticated and checks whether the MAC verifies using the key derived from the guessed PIN.
+It only tests the PINs 0000 through 9999, so you will have to use one of those if you want it to succeed.
+Make sure to uncheck the "Lock with master password on restart" option (otherwise the required information would need to be read from the Bitwarden application's memory (quite a different attack scenario)).</p>
+<p>It finds any 4 digit PIN in less than 4 seconds:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>$ time ./target/release/bitwarden-pin
+</span><span>Testing 4 digit pins from 0000 to 9999
+</span><span>Pin found: 9999
+</span><span>./bitwarden-pin  81.73s user 0.03s system 2384% cpu 3.429 total
+</span></code></pre>
+<h2 id="bitwarden-s-response">Bitwarden's response</h2>
+<p>I've reported the issue to Bitwarden previously, however it was marked out of scope as it belongs to one of these categories:</p>
+<blockquote>
+<p>Attacks requiring physical access to a user's device</p>
+</blockquote>
+<p>or</p>
+<blockquote>
+<p>Scenarios that are extremely complex, difficult or unlikely when utilizing already compromised administrative accounts, self-hosted server, networks or physical devices which would render much easier and alternate means of compromising the data contained within Bitwarden</p>
+</blockquote>
+<p>This is however not entirely true: only the device-local encrypted vault data needs to be accessed.
+<strong>If accessing device-local data is outside of the threat model, why are we encrypting these data at all? We might as well store them in plain text.</strong></p>
+<h1 id="mitigation-and-remediation">Mitigation and Remediation</h1>
+<h2 id="1-inform-better-about-the-risk">1. Inform better about the risk</h2>
+<p>The risk of this attack is relatively low (depending on your threat model): the attacker needs to gain access to the encrypted vault data stored on the device, and the user must configure Bitwarden in a specific way for the attack to be possible.
+Dumpster diving could give access to these data when the disk has not been erased and no additional measures like full-disk encryption were taken.
+However, if someone gains access to the device data (e.g. through coercion) they can start a brute-force attack, and don't require you to ever enter the PIN/trust the device.</p>
+<p>Advantages:</p>
+<ul>
+<li>Nothing to implement</li>
+</ul>
+<p>Disadvantage:</p>
+<ul>
+<li>PIN is brute-forceable when device data is obtained</li>
+</ul>
+<h2 id="2-rely-on-a-third-party-to-enforce-an-unlock-attempt-limit">2. Rely on a third-party to enforce an unlock attempt limit</h2>
+<p>Secret-share the master key with a backend that enforces an unlock attempt limit.</p>
+<p>Advantages:</p>
+<ul>
+<li>Easy to implement</li>
+</ul>
+<p>Disadvantages:</p>
+<ul>
+<li>Client needs to be online</li>
+<li>Access to the backend database and device allows immediate decryption (without a brute-force attack), the backend may also be coerced into releasing the ciphertext</li>
+</ul>
+<h2 id="3-rely-on-some-hardware-security-magic">3. Rely on some hardware security magic</h2>
+<p>Do the above (no. 2) in a Trusted Execution Environment, Intel SGX, TPM or something alike.
+Example implementations include <a href="https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/hello-why-pin-is-better-than-password">Windows Hello</a> which Bitwarden also has <a href="https://bitwarden.com/blog/introducing-desktop-biometrics/">support for</a> (I have not analyzed this feature at all, however).</p>
+<p>Advantages:</p>
+<ul>
+<li>Would likely work offline</li>
+</ul>
+<p>Disadvantages:</p>
+<ul>
+<li>Not all platforms support hardware security magic</li>
+</ul>
+<h1 id="final-words">Final Words</h1>
+<p>Using a long passphrase as a PIN in bitwarden is safe today. However, Bitwarden takes little effort in communicating the risks of choosing a short low-entropy PIN.
+Currently there is very little information to be found about the PIN in Bitwarden documentation, and it is not mentioned in the Security Whitepaper.
+A motivated attacker (e.g. a dumpster diver) can recover entire Bitwarden vaults today, unless additional measures like full-disk encryption were taken.</p>
+<h1 id="sources">Sources</h1>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                
+                    
+                    in <a href="https://ambiso.github.io/categories/crypto/">crypto</a>
+                
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+    </body>
+
+</html>

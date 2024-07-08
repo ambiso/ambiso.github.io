@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+      <title>CSCG2021 Secure Bank (writeup) - ambiso&#x27;s blog</title>
+
+      
+        
+          <link rel="alternate" type="application/atom+xml" title="RSS" href="https://ambiso.github.io/atom.xml">
+        
+          <link rel="alternate" type="application/rss+xml" title="RSS" href="https://ambiso.github.io/rss.xml">
+        
+      
+
+
+      
+          <link rel="stylesheet" href="https://ambiso.github.io/site.css">
+          
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+          
+      
+
+      
+      
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/slideout/1.0.1/slideout.min.js" defer></script>
+          
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous" defer>
+
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/mathtex-script-type.min.js" integrity="sha384-zWYbd0NBwgTsgIdFKVprSfTh1mbMPe5Hz1X3yY4Sd1h/K1cQoUe36OGwAGz/PcDy" crossorigin="anonymous"></script>
+              
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"
+                  onload="renderMathInElement(document.body);"></script>
+              
+          
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+        
+    
+        
+                
+                    <header>
+                        <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;ambiso.github.io">
+                                <span itemprop="name">Home
+                                </span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;ambiso.github.io&#x2F;categories">
+                                <span itemprop="name">Categories
+                                </span></a>
+                        
+                        </nav>
+                    </header>
+                
+            
+    
+
+<article itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+        <h1 itemprop="headline">CSCG2021 Secure Bank (writeup)</h1>
+        <span class="muted">
+    <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>6 minute read</span>
+    <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2021-06-06
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>In the <a href="https://earth.cscg.live/tasks/secure-bank">"Secure Bank"</a> challenge of the Cyber Security Challenge Germany (CSCG) 2021
+we are presented with a protocol that is meant to ensure that
+we can only login if we know a certain PIN.</p>
+<p>In a real world application this PIN could be generated as in <a href="https://en.wikipedia.org/wiki/Time-based_One-Time_Password">TOTP</a>s that are used for 2 factor authentication.
+In the challenge the PIN is simply generated randomly:</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>challenge = os.</span><span style="color:#bf616a;">urandom</span><span>(</span><span style="color:#d08770;">32</span><span>).</span><span style="color:#bf616a;">hex</span><span>()
+</span><span>msg = &#39;</span><span style="color:#a3be8c;">Challenge: </span><span>&#39; + challenge
+</span><span>
+</span><span>pin = rng.</span><span style="color:#bf616a;">randint</span><span>(</span><span style="color:#d08770;">0000</span><span>, </span><span style="color:#d08770;">9999</span><span>) </span><span style="color:#65737e;"># Random PIN
+</span><span style="color:#bf616a;">run_protocol</span><span>(pin, msg)
+</span></code></pre>
+<p>The protocol that the server runs is executed with a message and a PIN.
+The protocol resembles a password based authenticated key exchange (PAKE)
+since a shared secret that is bound to the PIN is obtained.
+Normally, we would have to know the PIN to compute the shared secret.
+However, a flaw lets us guess and check every possible PIN.
+The shared secret is then used to encrypt the challenge message,
+and the resulting ciphertext is sent to the client.
+The client is supposed to send back the challenge.
+In short: if we can obtain the random challenge from a run of the protocol we win✨.</p>
+<p>The challenge description also advises us not to try an online brute-force attack.
+To enforce this we actually have to recover the challenge twice from two consecutive protocol runs,
+where each has a randomly chosen PIN.
+That's \(10000^2 = 100\) million possible combinations!
+Assuming 30 online guesses per second it would take 38.58 days to perform this many guesses.
+Even with 100 million guesses we only have a
+probability of success of \(1-(1-\frac{1}{10000^2})^{10^8}\approx 0.63 = 63\%\).
+Therefore it seems much more economical (and fun!) to actually try and break the challenge.</p>
+<p>The protocol makes use of DH parameters from <a href="https://www.ietf.org/rfc/rfc3526.txt">RFC 3526</a>
+using a generator \(g=2\) and computes everything modulo some large prime.</p>
+<p>The protocol asks for three values from the client:
+The first two are an email address (that is used as a user ID) and a public parameter
+that is presumably generated by the generator \(g\).</p>
+<p>The client performs the following steps:</p>
+<ul>
+<li>generate a <code>user_id</code></li>
+<li>generate a secret \(x_a \in \mathbb{Z}_p\) where \(p\) is the large known prime</li>
+<li>compute the public parameter \(c_{\mathrm{pub}} = g^{x_a}\)</li>
+</ul>
+<p>The <code>user_id</code> and the public parameter \(c_{\mathrm{pub}}\) are sent to the server.</p>
+<p>The server then computes a bunch of values.
+You can skip over them, but here they are for completeness sake:</p>
+<ul>
+<li>
+<p>\(\mathrm{id}_a = g^{H(\mathrm{user\_id})}\)</p>
+</li>
+<li>
+<p>\(m_c = \mathrm{id}_a^{-\mathrm{pin}}\)</p>
+</li>
+<li>
+<p>\(t_a = c_{\mathrm{pub}} \cdot m_c\)</p>
+</li>
+<li>
+<p>\(m_s = \mathrm{id}_b^{\mathrm{pin}}\)</p>
+</li>
+<li>
+<p>sample a random \(r_b \in \mathbb{Z}_p\)</p>
+</li>
+<li>
+<p>\(t_b = g^{r_b}\)</p>
+</li>
+<li>
+<p>\(s_{\mathrm{pub}} = t_b \cdot m_s\)</p>
+</li>
+</ul>
+<p>The shared secret is computed as:</p>
+<p>$$z = t_a^{r_b}$$</p>
+<p>However, \(z\) alone is not sufficient:
+the key is computed as the hash of all values that occurred in the protocol run:</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#65737e;">### Calculate shared secret
+</span><span>z = </span><span style="color:#bf616a;">dh_exchange</span><span>(t_a, r_b)
+</span><span>key = SHA256.</span><span style="color:#bf616a;">new</span><span>(</span><span style="color:#bf616a;">long_to_bytes</span><span>(id_a) + </span><span style="color:#bf616a;">long_to_bytes</span><span>(</span><span style="color:#bf616a;">ID_SERVER</span><span>) + </span><span style="color:#bf616a;">long_to_bytes</span><span>(user_pub) + </span><span style="color:#bf616a;">long_to_bytes</span><span>(server_pub) + </span><span style="color:#bf616a;">long_to_bytes</span><span>(pin) + </span><span style="color:#bf616a;">long_to_bytes</span><span>(z)).</span><span style="color:#bf616a;">digest</span><span>()
+</span></code></pre>
+<p>Luckily, we already know <code>id_a</code>, <code>ID_SERVER</code>, <code>user_pub</code> (=\(c_{\mathrm{pub}}\)), <code>server_pub</code> (=\(s_{\mathrm{pub}}\)).
+The only values that are missing are <code>pin</code> and <code>z</code>.</p>
+<p>A major flaw that lets us abuse this protocol is
+that we know the discrete logarithm of the server's public
+parameter from the implementation:</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#bf616a;">ID_SERVER </span><span>= </span><span style="color:#bf616a;">dh_genpub</span><span>(int.</span><span style="color:#bf616a;">from_bytes</span><span>(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">server</span><span>&#39;, &#39;</span><span style="color:#a3be8c;">big</span><span>&#39;))
+</span></code></pre>
+<p>The discrete logarithm is simply <code>int.from_bytes(b'server', 'big')</code>!</p>
+<p>Using this information we can perform an offline brute force attack on the PIN
+by computing a candidate \(g^{\hat{r}_b}\) as:</p>
+<p>\(g^{\hat{r}_{b}} = s_{\mathrm{pub}} / g^{x_b \cdot \mathrm{pin}}\)</p>
+<p>We can compute this value because \(x_b\), the server's private part was made public.
+The above formula follows from the last computation in the server:</p>
+<p>$$\begin{aligned}
+s_\mathit{pub}&amp;=t_b \cdot m_s \\
+&amp;=g^{r_b} \cdot {\left(g^{x_b}\right)}^{\mathrm{pin}}
+\end{aligned}$$</p>
+<p>By guessing the PIN we obtain a candidate \(g^{\hat{r}_{b}}\).
+We can then compute a candidate \(\hat{z}\) as:</p>
+<p>$$\hat{z} = {\left(g^{\hat{r}_{b}}\right)}^{x_a - \mathrm{pin} \cdot H(\mathrm{user\_id})}.$$</p>
+<p>Using this candidate \(\hat{z}\) and the guessed PIN
+we can derive a symmetric key to decrypt the received ciphertext.
+We can check whether the key is correct by comparing the decrypted text
+against the known plaintext prefix "Challenge: ".</p>
+<p>Voilà! Now we need 5000 <em>offline</em> guesses in expectation to recover the correct PIN!
+Therefore this completely breaks the security of the protocol:
+a PAKE should prevent an adversary from guessing offline.</p>
+<p>The flaw we discovered is analogous to one that can occur "in the real world" with SPAKE2
+and the challenge description hints at this: "The <strong>SP</strong> b<strong>A</strong>n<strong>K</strong> <strong>E2</strong> introduced a new protocol [...]".
+I've also found a blog post detailing this issue <a href="https://www.lothar.com/blog/54-spake2-random-elements/">here</a>.
+It also describes how one could pick arbitrary public parameters for which nobody knows the discrete logarithm.
+This is possible, since the server never actually uses the discrete log in the protocol.
+Therefore it is sufficient to have a single public value that everyone trusts - but nobody has its discrete log.</p>
+<h1 id="full-exploit">Full Exploit</h1>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>Crypto.Hash </span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">SHA256
+</span><span>
+</span><span style="color:#b48ead;">from </span><span>gmpy2 </span><span style="color:#b48ead;">import </span><span>powmod
+</span><span style="color:#b48ead;">import </span><span>pwnlib
+</span><span>
+</span><span>s = pwnlib.tubes.process.</span><span style="color:#bf616a;">process</span><span>(&#39;</span><span style="color:#a3be8c;">ncat --ssl xxx-secure-bank.challenge.broker.cscg.live 31337</span><span>&#39;.</span><span style="color:#bf616a;">split</span><span>())
+</span><span>
+</span><span>user_id = &quot;</span><span style="color:#a3be8c;">Some ID</span><span>&quot;
+</span><span>email_hash = SHA256.</span><span style="color:#bf616a;">new</span><span>(user_id.</span><span style="color:#bf616a;">encode</span><span>()).</span><span style="color:#bf616a;">digest</span><span>()
+</span><span>email_num = int.</span><span style="color:#bf616a;">from_bytes</span><span>(email_hash, &quot;</span><span style="color:#a3be8c;">big</span><span>&quot;)
+</span><span>
+</span><span style="color:#b48ead;">from </span><span>server </span><span style="color:#b48ead;">import </span><span style="color:#d08770;">*
+</span><span>
+</span><span>
+</span><span style="color:#65737e;">#user_pub = pow(email_num, -1, server.PRIME)
+</span><span>user_x = </span><span style="color:#d08770;">1337
+</span><span>user_pub = </span><span style="color:#bf616a;">powmod</span><span>(</span><span style="color:#bf616a;">GEN</span><span>, user_x, </span><span style="color:#bf616a;">PRIME</span><span>)
+</span><span>id_a = </span><span style="color:#bf616a;">powmod</span><span>(</span><span style="color:#bf616a;">GEN</span><span>, email_num, </span><span style="color:#bf616a;">PRIME</span><span>)
+</span><span>
+</span><span>server_x = int.</span><span style="color:#bf616a;">from_bytes</span><span>(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">server</span><span>&#39;, &#39;</span><span style="color:#a3be8c;">big</span><span>&#39;)
+</span><span>
+</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">break_pin</span><span>(</span><span style="color:#bf616a;">server_pub</span><span>, </span><span style="color:#bf616a;">enc</span><span>, </span><span style="color:#bf616a;">known_plaintext</span><span>):
+</span><span>    </span><span style="color:#b48ead;">for </span><span>pin </span><span style="color:#b48ead;">in </span><span style="color:#96b5b4;">range</span><span>(</span><span style="color:#d08770;">10000</span><span>):
+</span><span>        </span><span style="color:#96b5b4;">print</span><span>(pin)
+</span><span>        </span><span style="color:#65737e;"># Compute candidate g_rb
+</span><span>        g_rb = (server_pub * </span><span style="color:#bf616a;">powmod</span><span>(</span><span style="color:#bf616a;">powmod</span><span>(</span><span style="color:#bf616a;">GEN</span><span>, server_x * pin, </span><span style="color:#bf616a;">PRIME</span><span>), -</span><span style="color:#d08770;">1</span><span>, </span><span style="color:#bf616a;">PRIME</span><span>)) % </span><span style="color:#bf616a;">PRIME
+</span><span>        </span><span style="color:#65737e;"># Compute candidate z
+</span><span>        z = </span><span style="color:#bf616a;">powmod</span><span>(g_rb, user_x + -pin * email_num, </span><span style="color:#bf616a;">PRIME</span><span>)
+</span><span>        key = SHA256.</span><span style="color:#bf616a;">new</span><span>(</span><span style="color:#bf616a;">long_to_bytes</span><span>(id_a) + </span><span style="color:#bf616a;">long_to_bytes</span><span>(</span><span style="color:#bf616a;">ID_SERVER</span><span>) + </span><span style="color:#bf616a;">long_to_bytes</span><span>(user_pub) + </span><span style="color:#bf616a;">long_to_bytes</span><span>(server_pub) + </span><span style="color:#bf616a;">long_to_bytes</span><span>(pin) + </span><span style="color:#bf616a;">long_to_bytes</span><span>(z)).</span><span style="color:#bf616a;">digest</span><span>()
+</span><span>        </span><span style="color:#65737e;"># Test pin against known plaintext
+</span><span>        aes = AES.</span><span style="color:#bf616a;">new</span><span>(key, </span><span style="color:#bf616a;">AES</span><span>.</span><span style="color:#bf616a;">MODE_ECB</span><span>)
+</span><span>        dec = aes.</span><span style="color:#bf616a;">decrypt</span><span>(enc)
+</span><span>        </span><span style="color:#b48ead;">if </span><span>known_plaintext in dec:
+</span><span>            dec = </span><span style="color:#bf616a;">str</span><span>(Padding.</span><span style="color:#bf616a;">unpad</span><span>(dec, </span><span style="color:#d08770;">16</span><span>), &#39;</span><span style="color:#a3be8c;">utf-8</span><span>&#39;)
+</span><span>            </span><span style="color:#96b5b4;">print</span><span>(</span><span style="color:#b48ead;">f</span><span>&quot;</span><span style="color:#a3be8c;">Decrypted: </span><span>{dec}&quot;)
+</span><span>            challenge = dec[</span><span style="color:#96b5b4;">len</span><span>(known_plaintext):]
+</span><span>            </span><span style="color:#b48ead;">return </span><span>challenge
+</span><span>    </span><span style="color:#96b5b4;">print</span><span>(&quot;</span><span style="color:#a3be8c;">PIN not found</span><span>&quot;)
+</span><span>
+</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">do_break</span><span>(</span><span style="color:#bf616a;">known_plaintext</span><span>):
+</span><span>    s.</span><span style="color:#bf616a;">sendline</span><span>(</span><span style="color:#b48ead;">f</span><span>&quot;{user_id}&quot;)
+</span><span>    s.</span><span style="color:#bf616a;">sendline</span><span>(</span><span style="color:#b48ead;">f</span><span>&quot;{user_pub}&quot;)
+</span><span>    </span><span style="color:#96b5b4;">print</span><span>(s.</span><span style="color:#bf616a;">recvline</span><span>())
+</span><span>    server_pub = </span><span style="color:#bf616a;">int</span><span>(s.</span><span style="color:#bf616a;">recvline</span><span>().</span><span style="color:#bf616a;">split</span><span>()[-</span><span style="color:#d08770;">1</span><span>])
+</span><span>    enc = bytes.</span><span style="color:#bf616a;">fromhex</span><span>(</span><span style="color:#bf616a;">str</span><span>(s.</span><span style="color:#bf616a;">recvline</span><span>().</span><span style="color:#bf616a;">split</span><span>()[-</span><span style="color:#d08770;">1</span><span>], &#39;</span><span style="color:#a3be8c;">utf-8</span><span>&#39;))
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">break_pin</span><span>(server_pub, enc, known_plaintext)
+</span><span>
+</span><span>s.</span><span style="color:#bf616a;">sendline</span><span>(</span><span style="color:#b48ead;">f</span><span>&quot;{</span><span style="color:#bf616a;">do_break</span><span>(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">Challenge: </span><span>&#39;)}&quot;)
+</span><span style="color:#bf616a;">do_break</span><span>(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">CSCG{</span><span>&#39;)
+</span></code></pre>
+<h1 id="see-also">See Also</h1>
+<ul>
+<li><a href="https://www.lothar.com/blog/54-spake2-random-elements/">https://www.lothar.com/blog/54-spake2-random-elements/</a> (<a href="https://web.archive.org/web/20210226042526/https://www.lothar.com/blog/54-spake2-random-elements/">archived</a>)</li>
+</ul>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                
+                    
+                    in <a href="https://ambiso.github.io/categories/writeup/">writeup</a>
+                
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+    </body>
+
+</html>

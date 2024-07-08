@@ -1,10 +1,10 @@
 +++
-title = "Disable ISP DNS with systemd-networkd"
+title = "systemd-resolved takes 10 seconds to resolve with DNS over TLS (DoT)"
 [taxonomies]
 categories = ["misc"]
 +++
 
-If someone uses `DnsOverTLS=yes`` in their `resolved.conf`` and some applications need 10 seconds to resolve something - try disabling your router's DNS servers:
+If you're using `DnsOverTLS=yes` in your `resolved.conf`` and some applications need 10 seconds to resolve something - try disabling your router's DNS servers:
 
 ```
 [DHCP]

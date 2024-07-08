@@ -8,8 +8,8 @@ description = "excursions into security, cryptography and math"
 compile_sass = true
 
 # RSS
-generate_feed = true
-# feed_filename = "feed"
+generate_feeds = true
+feed_filenames = ["atom.xml", "rss.xml"]
 
 # Whether to build a search index to be used later on by a JavaScript library
 build_search_index = false

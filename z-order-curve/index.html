@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+      <title>Z-Order Curve Visualization - ambiso&#x27;s blog</title>
+
+      
+        
+          <link rel="alternate" type="application/atom+xml" title="RSS" href="https://ambiso.github.io/atom.xml">
+        
+          <link rel="alternate" type="application/rss+xml" title="RSS" href="https://ambiso.github.io/rss.xml">
+        
+      
+
+
+      
+          <link rel="stylesheet" href="https://ambiso.github.io/site.css">
+          
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+          
+      
+
+      
+      
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/slideout/1.0.1/slideout.min.js" defer></script>
+          
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous" defer>
+
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/mathtex-script-type.min.js" integrity="sha384-zWYbd0NBwgTsgIdFKVprSfTh1mbMPe5Hz1X3yY4Sd1h/K1cQoUe36OGwAGz/PcDy" crossorigin="anonymous"></script>
+              
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"
+                  onload="renderMathInElement(document.body);"></script>
+              
+          
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+        
+    
+        
+                
+                    <header>
+                        <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;ambiso.github.io">
+                                <span itemprop="name">Home
+                                </span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;ambiso.github.io&#x2F;categories">
+                                <span itemprop="name">Categories
+                                </span></a>
+                        
+                        </nav>
+                    </header>
+                
+            
+    
+
+<article itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+        <h1 itemprop="headline">Z-Order Curve Visualization</h1>
+        <span class="muted">
+    <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>2 minute read</span>
+    <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2021-05-30
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>A visualization of a 3D <a href="https://en.wikipedia.org/wiki/Z-order_curve">Z-order curve</a>.
+Doesn't really work on mobile - use the mouse to rotate the view.</p>
+<p>A friend of mine asked me about optimizing matrix multiplication.
+One way to obtain better cache locality is to use space filling curves.</p>
+<iframe src="zoc.html" width="800" height="800">
+</iframe>
+<p>I made this visualization using <a href="https://github.com/JuliaPlots/WGLMakie.jl">WGLMakie</a> and <a href="https://github.com/SimonDanisch/JSServe.jl">JSServe.jl</a> in <a href="https://julialang.org/">Julia</a>.
+We can convert between points in \(\{0,\ldots,2^{3 \cdot n}-1\}\) and \(\left(\{0,\ldots,2^n-1\}\right)^3\) by interleaving the bits.
+This is described in more detail on the <a href="https://en.wikipedia.org/wiki/Z-order_curve#Coordinate_values">Wikipedia</a> page.
+The <code>zoc2p</code> function implements this mapping.</p>
+<pre data-lang="julia" style="background-color:#2b303b;color:#c0c5ce;" class="language-julia "><code class="language-julia" data-lang="julia"><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">zoc2p</span><span>(zoc, digits_per_coordinate, dim)
+</span><span>    p = digits(zoc, base=</span><span style="color:#d08770;">2</span><span>, pad=dim * digits_per_coordinate)
+</span><span>    mapslices(reshape(p, :, digits_per_coordinate); dims=</span><span style="color:#d08770;">2</span><span>) </span><span style="color:#b48ead;">do</span><span> x
+</span><span>        sum(</span><span style="color:#d08770;">2</span><span>^(i-</span><span style="color:#d08770;">1</span><span>) * x </span><span style="color:#b48ead;">for </span><span>(i,x) </span><span style="color:#b48ead;">in</span><span> enumerate(x))
+</span><span>    </span><span style="color:#b48ead;">end
+</span><span style="color:#b48ead;">end
+</span></code></pre>
+<p>Here, <code>dim</code> is the number of dimensions of the z-order curve and <code>digits_per_coordinate</code> corresponds to \(n\).
+We then enumerate all points in \(\{0,\ldots,2^{3 \cdot n}-1\}\) and send them through the function to obtain the corresponding point in 3D space:</p>
+<pre data-lang="julia" style="background-color:#2b303b;color:#c0c5ce;" class="language-julia "><code class="language-julia" data-lang="julia"><span>v = vcat([zoc</span><span style="color:#d08770;">2</span><span>p(i, digits_per_coordinate, dim)&#39; </span><span style="color:#b48ead;">for</span><span> i=</span><span style="color:#d08770;">0</span><span>:</span><span style="color:#d08770;">2</span><span>^(digits_per_coordinate*dim)-</span><span style="color:#d08770;">1</span><span>]...)
+</span></code></pre>
+<p>Here's the full plotting function:</p>
+<pre data-lang="julia" style="background-color:#2b303b;color:#c0c5ce;" class="language-julia "><code class="language-julia" data-lang="julia"><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">plt</span><span>()
+</span><span>    set_theme!(resolution=(</span><span style="color:#d08770;">800</span><span>, </span><span style="color:#d08770;">800</span><span>))
+</span><span>
+</span><span>    app = App() </span><span style="color:#b48ead;">do</span><span> s::Session
+</span><span>        digits_per_coordinate = </span><span style="color:#d08770;">3
+</span><span>        dim = </span><span style="color:#d08770;">3
+</span><span>        v = vcat([zoc</span><span style="color:#d08770;">2</span><span>p(i, digits_per_coordinate, dim)&#39; </span><span style="color:#b48ead;">for</span><span> i=</span><span style="color:#d08770;">0</span><span>:</span><span style="color:#d08770;">2</span><span>^(digits_per_coordinate*dim)-</span><span style="color:#d08770;">1</span><span>]...)
+</span><span>
+</span><span>        xs = v[:, </span><span style="color:#d08770;">1</span><span>]
+</span><span>        ys = v[:, </span><span style="color:#d08770;">2</span><span>]
+</span><span>        zs = v[:, </span><span style="color:#d08770;">3</span><span>]
+</span><span>        progress = (</span><span style="color:#d08770;">0</span><span>:length(xs)-</span><span style="color:#d08770;">1</span><span>)./(length(xs)-</span><span style="color:#d08770;">1</span><span>)
+</span><span>
+</span><span>        fig, ax, splot = lines(xs, ys, zs, linewidth=</span><span style="color:#d08770;">50</span><span>, color=progress, colormap=</span><span style="color:#a3be8c;">:rainbow</span><span>)
+</span><span>
+</span><span>        DOM.div(fig)
+</span><span>    </span><span style="color:#b48ead;">end
+</span><span>
+</span><span>    page = Page(offline=</span><span style="color:#d08770;">true</span><span>, exportable=</span><span style="color:#d08770;">true</span><span>)
+</span><span>    page_html = sprint() </span><span style="color:#b48ead;">do</span><span> io
+</span><span>        show(io, </span><span style="color:#b48ead;">MIME</span><span>&quot;</span><span style="color:#a3be8c;">text/html</span><span>&quot;(), page)
+</span><span>        show(io, </span><span style="color:#b48ead;">MIME</span><span>&quot;</span><span style="color:#a3be8c;">text/html</span><span>&quot;(), app)
+</span><span>    </span><span style="color:#b48ead;">end
+</span><span>
+</span><span>    write(&quot;</span><span style="color:#a3be8c;">export/index.html</span><span>&quot;, page_html)
+</span><span style="color:#b48ead;">end
+</span></code></pre>
+<p><code>JSServe</code> then allows us to export the plot as a static webpage, and it's the one you see above embedded as an <code>iframe</code>!</p>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                
+                    
+                    in <a href="https://ambiso.github.io/categories/misc/">misc</a>
+                
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+    </body>
+
+</html>

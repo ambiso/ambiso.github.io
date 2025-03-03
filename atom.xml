@@ -1,0 +1,751 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>ambiso&#x27;s blog</title>
+    <subtitle>excursions into security, cryptography and math</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://ambiso.github.io/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://ambiso.github.io"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2024-12-10T00:00:00+00:00</updated>
+    <id>https://ambiso.github.io/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Streaming audio over the network with pactl</title>
+        <published>2024-12-10T00:00:00+00:00</published>
+        <updated>2024-12-10T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://ambiso.github.io/pactl-remote-tcp-audio/"/>
+        <id>https://ambiso.github.io/pactl-remote-tcp-audio/</id>
+        
+        <content type="html" xml:base="https://ambiso.github.io/pactl-remote-tcp-audio/">&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# On the receiving end:
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pactl&lt;&#x2F;span&gt;&lt;span&gt; load-module module-native-protocol-tcp-new port=4656 listen=&amp;lt;local server IP&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# On the sending end:
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pactl&lt;&#x2F;span&gt;&lt;span&gt; load-module module-native-protocol-tcp-new sink=&amp;lt;local server IP&amp;gt;:4656
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# To finish:
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pactl&lt;&#x2F;span&gt;&lt;span&gt; unload-module module-native-protocol-tcp-new
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>systemd-resolved takes 10 seconds to resolve with DNS over TLS (DoT)</title>
+        <published>2024-07-08T00:00:00+00:00</published>
+        <updated>2024-07-08T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://ambiso.github.io/disable-isp-dns/"/>
+        <id>https://ambiso.github.io/disable-isp-dns/</id>
+        
+        <content type="html" xml:base="https://ambiso.github.io/disable-isp-dns/">&lt;p&gt;If you&#x27;re using &lt;code&gt;DnsOverTLS=yes&lt;&#x2F;code&gt; in your &lt;code&gt;resolved.conf&lt;&#x2F;code&gt; and some applications need 10 seconds to resolve something - try disabling your router&#x27;s DNS servers:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;[DHCP]
+&lt;&#x2F;span&gt;&lt;span&gt;UseDNS=false
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;[IPv6AcceptRA]
+&lt;&#x2F;span&gt;&lt;span&gt;UseDNS=false
+&lt;&#x2F;span&gt;&lt;span&gt;DHCPv6Client=false
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;code&gt;systemd-resolved&lt;&#x2F;code&gt; always tries to contact the IPv6 DNS server of my ISP&#x27;s router on port 853 - but it doesn&#x27;t respond at all (not even a &lt;code&gt;RST&lt;&#x2F;code&gt;), which is why it retransmitted the SYN several times until it gave up after 10 seconds and switched to one of the configured global DNS resolvers.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Bitwarden PINs can be brute-forced</title>
+        <published>2023-02-28T00:00:00+00:00</published>
+        <updated>2023-02-28T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://ambiso.github.io/bitwarden-pin/"/>
+        <id>https://ambiso.github.io/bitwarden-pin/</id>
+        
+        <content type="html" xml:base="https://ambiso.github.io/bitwarden-pin/">&lt;div style=&quot;margin: 0 1% 0 1%; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background-color: #3f3f9f; color: white; padding: 0.5em 0.5em 0.25em; font-weight: bold;&quot;&gt;Addressing Misconceptions&lt;&#x2F;div&gt;
+&lt;div style=&quot;margin: 0 1% 1em 1%; border-radius: 10px; border-top-left-radius: 0; border-top-right-radius: 0; background-color: #111; padding: 0.25em 0.5em 0.5em;&quot;&gt;
+&gt; Obviously a PIN is brute-forceable
+&lt;p&gt;No, it&#x27;s not obvious: there&#x27;s several secure implementation options that prevent a brute-force attack in the device-local data access scenario. See &lt;a href=&quot;#mitigation-and-remediation&quot;&gt;Mitigation and Remediation&lt;&#x2F;a&gt; options 2 and 3.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;I might as well install a keylogger&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;This is a different attack scenario. If I throw away my computer, or you steal it in its powered off state, a keylogger won&#x27;t help you since I won&#x27;t be entering my password again.&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+&lt;div style=&quot;margin: 0 1% 0 1%; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background-color: #9f3f3f; color: white; padding: 0.5em 0.5em 0.25em; font-weight: bold;&quot;&gt;Update&lt;&#x2F;div&gt;
+&lt;div style=&quot;margin: 0 1% 1em 1%; border-radius: 10px; border-top-left-radius: 0; border-top-right-radius: 0; background-color: #111; padding: 0.25em 0.5em 0.5em;&quot;&gt;
+Since the writing of this post Bitwarden has updated their &lt;a href=&quot;https:&#x2F;&#x2F;bitwarden.com&#x2F;help&#x2F;unlock-with-pin&#x2F;&quot;&gt;documentation about the PIN feature&lt;&#x2F;a&gt;:
+&lt;p&gt;It now warns rather prominently:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Using a PIN can weaken the level of encryption that protects your application&#x27;s local vault database. If you are worried about attack vectors that involve your device&#x27;s local data being compromised, you may want to reconsider the convenience of using a PIN.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;You can view the previous versions &lt;a href=&quot;https:&#x2F;&#x2F;web.archive.org&#x2F;web&#x2F;20230124121851&#x2F;https:&#x2F;&#x2F;bitwarden.com&#x2F;help&#x2F;unlock-with-pin&#x2F;&quot;&gt;here&lt;&#x2F;a&gt;. The warning seems to exist since September 2022, but back then it was buried at the very bottom of the page.&lt;&#x2F;p&gt;
+&lt;p&gt;Unfortunately I could not find any changes to the client (as of 2023-03-19), that would warn a user about this (with e.g. a modal warning), as they&#x27;re setting the feature up. Maybe I should just submit a PR myself.&lt;&#x2F;p&gt;
+&lt;p&gt;I also don&#x27;t know if any of this applies to the Windows or MacOS clients, you may test it for yourself.&lt;&#x2F;p&gt;
+&lt;p&gt;Also don&#x27;t freak out about this too much. As far as I can tell &lt;b&gt;Bitwarden is a good password manager&lt;&#x2F;b&gt;, and you should definitely continue to use it. (Though maybe reconsider whether you want to use the PIN feature if you have it enabled as in the configuration below. (e.g. ensure you have full-disk encryption)) I just wish they&#x27;d warn about the risks of using the PIN feature more clearly.&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+&lt;div style=&quot;margin: 0 1% 0 1%; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background-color: #3f3f3f; color: white; padding: 0.5em 0.5em 0.25em; font-weight: bold;&quot;&gt;Abstract&lt;&#x2F;div&gt;
+&lt;div style=&quot;margin: 0 1% 1em 1%; border-radius: 10px; border-top-left-radius: 0; border-top-right-radius: 0; background-color: #111; padding: 0.25em 0.5em 0.5em;&quot;&gt;
+If an attacker can get access to the encrypted vault data stored locally on your device,
+and you&#x27;ve configured a Bitwarden PIN as in the image below, the attacker can brute-force the PIN and gain access to your vault&#x27;s master key.
+&lt;p&gt;Effectively, Bitwarden may just as well store the data in plain text on disk.&lt;&#x2F;p&gt;
+&lt;p&gt;Bitwarden clients do not warn about this risk.&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;The Bitwarden desktop client and browser extensions allow the user to unlock Bitwarden with a PIN.
+This PIN can be set-up per device after logging in to an account using the master password.
+All information pertaining to the PIN is stored locally on the device.
+It cannot be used to sign in to an account (read: authenticate with the Bitwarden backend server), but it can be used to obtain access to the vault data, that has been synced and stored locally in encrypted form.&lt;&#x2F;p&gt;
+&lt;p&gt;Let&#x27;s now assume that the user enables the PIN unlock and configures Bitwarden so that it doesn&#x27;t require the master password on restart.&lt;&#x2F;p&gt;
+&lt;div style=&quot;display: flex; width: 100%; justify-content: space-around;&quot;&gt;
+&lt;img src=&quot;pin_config.webp&quot; alt=&quot;PIN Config Window with a low-entropy PIN entered into the PIN field and the &#x27;Lock with master password on restart&#x27; option unchecked&quot; style=&quot;width: 20em; margin-top: 1em; margin-bottom: 1em;&quot;&#x2F;&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Then a secret derived only from the user&#x27;s email and PIN will be used to encrypt the master vault key.
+It stores roughly&lt;&#x2F;p&gt;
+&lt;p&gt;\[c = \mathrm{Encrypt}_{\mathcal{K}(\mathrm{email},\ \mathrm{PIN})}(\text{master key})\]&lt;&#x2F;p&gt;
+&lt;p&gt;on disk, where \(\mathcal{K}\) is a key derivation function.
+This means if an attacker can at any point gain access to the encrypted vault data stored on the device the attacker can brute-force the PIN:
+the attacker can check whether decryption of \(c\) succeeds using the guessed PIN.
+This brute-force will very likely be successful, since PINs are usually very low-entropy.
+Now, granted, the key derivation function is PBKDF2 with 100000 iterations (+ HKDF), but that won&#x27;t help with a 4 digit pin.&lt;&#x2F;p&gt;
+&lt;p&gt;Bitwarden seems to be aware that PINs are low-entropy and that many PIN guesses are a problem: the client allows only 5 PIN unlock attempts.
+However this 5 guesses limit is enforced completely within the client&#x27;s logic: it relies on the attacker using the official Bitwarden client.
+Instead, an attacker can directly attack the ciphertext \(c\) above, trying different PINs until the ciphertext successfully decrypts.&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;exploitation&quot;&gt;Exploitation&lt;&#x2F;h1&gt;
+&lt;video width=&quot;100%&quot; controls&gt;
+&lt;source src=&quot;exploit_demo.webm&quot; type=&quot;video&#x2F;webm&quot;&gt;
+&lt;meta itemprop=&quot;description&quot; content=&quot;Video showing bitwarden. User then sets the pin 2345. The vault is locked and then bitwarden is quit. In the terminal the exploit program is run, which after a short while outputs the PIN 2345.&quot;&gt;
+&lt;&#x2F;video&gt;
+&lt;p&gt;A proof of concept exploit for Linux only can be found &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;ambiso&#x2F;bitwarden-pin&quot;&gt;here&lt;&#x2F;a&gt;.
+It uses the fact that the encryption is authenticated and checks whether the MAC verifies using the key derived from the guessed PIN.
+It only tests the PINs 0000 through 9999, so you will have to use one of those if you want it to succeed.
+Make sure to uncheck the &quot;Lock with master password on restart&quot; option (otherwise the required information would need to be read from the Bitwarden application&#x27;s memory (quite a different attack scenario)).&lt;&#x2F;p&gt;
+&lt;p&gt;It finds any 4 digit PIN in less than 4 seconds:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;$ time .&#x2F;target&#x2F;release&#x2F;bitwarden-pin
+&lt;&#x2F;span&gt;&lt;span&gt;Testing 4 digit pins from 0000 to 9999
+&lt;&#x2F;span&gt;&lt;span&gt;Pin found: 9999
+&lt;&#x2F;span&gt;&lt;span&gt;.&#x2F;bitwarden-pin  81.73s user 0.03s system 2384% cpu 3.429 total
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;bitwarden-s-response&quot;&gt;Bitwarden&#x27;s response&lt;&#x2F;h2&gt;
+&lt;p&gt;I&#x27;ve reported the issue to Bitwarden previously, however it was marked out of scope as it belongs to one of these categories:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Attacks requiring physical access to a user&#x27;s device&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;or&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Scenarios that are extremely complex, difficult or unlikely when utilizing already compromised administrative accounts, self-hosted server, networks or physical devices which would render much easier and alternate means of compromising the data contained within Bitwarden&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;This is however not entirely true: only the device-local encrypted vault data needs to be accessed.
+&lt;strong&gt;If accessing device-local data is outside of the threat model, why are we encrypting these data at all? We might as well store them in plain text.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;mitigation-and-remediation&quot;&gt;Mitigation and Remediation&lt;&#x2F;h1&gt;
+&lt;h2 id=&quot;1-inform-better-about-the-risk&quot;&gt;1. Inform better about the risk&lt;&#x2F;h2&gt;
+&lt;p&gt;The risk of this attack is relatively low (depending on your threat model): the attacker needs to gain access to the encrypted vault data stored on the device, and the user must configure Bitwarden in a specific way for the attack to be possible.
+Dumpster diving could give access to these data when the disk has not been erased and no additional measures like full-disk encryption were taken.
+However, if someone gains access to the device data (e.g. through coercion) they can start a brute-force attack, and don&#x27;t require you to ever enter the PIN&#x2F;trust the device.&lt;&#x2F;p&gt;
+&lt;p&gt;Advantages:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Nothing to implement&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Disadvantage:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;PIN is brute-forceable when device data is obtained&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;2-rely-on-a-third-party-to-enforce-an-unlock-attempt-limit&quot;&gt;2. Rely on a third-party to enforce an unlock attempt limit&lt;&#x2F;h2&gt;
+&lt;p&gt;Secret-share the master key with a backend that enforces an unlock attempt limit.&lt;&#x2F;p&gt;
+&lt;p&gt;Advantages:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Easy to implement&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Disadvantages:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Client needs to be online&lt;&#x2F;li&gt;
+&lt;li&gt;Access to the backend database and device allows immediate decryption (without a brute-force attack), the backend may also be coerced into releasing the ciphertext&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;3-rely-on-some-hardware-security-magic&quot;&gt;3. Rely on some hardware security magic&lt;&#x2F;h2&gt;
+&lt;p&gt;Do the above (no. 2) in a Trusted Execution Environment, Intel SGX, TPM or something alike.
+Example implementations include &lt;a href=&quot;https:&#x2F;&#x2F;learn.microsoft.com&#x2F;en-us&#x2F;windows&#x2F;security&#x2F;identity-protection&#x2F;hello-for-business&#x2F;hello-why-pin-is-better-than-password&quot;&gt;Windows Hello&lt;&#x2F;a&gt; which Bitwarden also has &lt;a href=&quot;https:&#x2F;&#x2F;bitwarden.com&#x2F;blog&#x2F;introducing-desktop-biometrics&#x2F;&quot;&gt;support for&lt;&#x2F;a&gt; (I have not analyzed this feature at all, however).&lt;&#x2F;p&gt;
+&lt;p&gt;Advantages:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Would likely work offline&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Disadvantages:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Not all platforms support hardware security magic&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h1 id=&quot;final-words&quot;&gt;Final Words&lt;&#x2F;h1&gt;
+&lt;p&gt;Using a long passphrase as a PIN in bitwarden is safe today. However, Bitwarden takes little effort in communicating the risks of choosing a short low-entropy PIN.
+Currently there is very little information to be found about the PIN in Bitwarden documentation, and it is not mentioned in the Security Whitepaper.
+A motivated attacker (e.g. a dumpster diver) can recover entire Bitwarden vaults today, unless additional measures like full-disk encryption were taken.&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;sources&quot;&gt;Sources&lt;&#x2F;h1&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Rust Synchronous Executor</title>
+        <published>2023-02-28T00:00:00+00:00</published>
+        <updated>2023-02-28T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://ambiso.github.io/rust-synchronous-executor/"/>
+        <id>https://ambiso.github.io/rust-synchronous-executor/</id>
+        
+        <content type="html" xml:base="https://ambiso.github.io/rust-synchronous-executor/">&lt;p&gt;Someone asked for an executor that only executes synchronous code... So here&#x27;s a terrible crime:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;use &lt;&#x2F;span&gt;&lt;span&gt;std::future::Future;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;use &lt;&#x2F;span&gt;&lt;span&gt;std::pin::Pin;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;use &lt;&#x2F;span&gt;&lt;span&gt;std::task::Poll;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;use &lt;&#x2F;span&gt;&lt;span&gt;std::task::{Context, RawWaker, RawWakerVTable, Waker};
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;n&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;i32&lt;&#x2F;span&gt;&lt;span&gt;) -&amp;gt; Pin&amp;lt;Box&amp;lt;dyn Future&amp;lt;Output = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;i32&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&amp;gt;&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt; n &amp;lt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2 &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;        Box::pin(async &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;move &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1
+&lt;&#x2F;span&gt;&lt;span&gt;        })
+&lt;&#x2F;span&gt;&lt;span&gt;    } &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;else &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;        Box::pin(async &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;move &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;fib&lt;&#x2F;span&gt;&lt;span&gt;(n-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;).await + &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;fib&lt;&#x2F;span&gt;&lt;span&gt;(n-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;).await
+&lt;&#x2F;span&gt;&lt;span&gt;        })
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;unsafe fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;clone&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;_waker&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;*const &lt;&#x2F;span&gt;&lt;span&gt;()) -&amp;gt; RawWaker {
+&lt;&#x2F;span&gt;&lt;span&gt;    todo!()
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;unsafe fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;wake&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;_waker&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;*const &lt;&#x2F;span&gt;&lt;span&gt;()) {
+&lt;&#x2F;span&gt;&lt;span&gt;    todo!()
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;unsafe fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;wake_by_ref&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;_waker&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;*const &lt;&#x2F;span&gt;&lt;span&gt;()) {
+&lt;&#x2F;span&gt;&lt;span&gt;    todo!()
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;unsafe fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;drop&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;_waker&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;*const &lt;&#x2F;span&gt;&lt;span&gt;()) {
+&lt;&#x2F;span&gt;&lt;span&gt;    
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;const &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;VTABLE&lt;&#x2F;span&gt;&lt;span&gt;: RawWakerVTable = RawWakerVTable::new(clone, wake, wake_by_ref, drop);
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;block_on&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;F: Future&amp;gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;fut&lt;&#x2F;span&gt;&lt;span&gt;: F) -&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;F::&lt;&#x2F;span&gt;&lt;span&gt;Output {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; data = ();
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; raw_waker = RawWaker::new(&amp;amp;data as &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;*const &lt;&#x2F;span&gt;&lt;span&gt;_, &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;VTABLE&lt;&#x2F;span&gt;&lt;span&gt;);
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; waker = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;unsafe &lt;&#x2F;span&gt;&lt;span&gt;{ Waker::from_raw(raw_waker) };
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let mut&lt;&#x2F;span&gt;&lt;span&gt; ctx = Context::from_waker(&amp;amp;waker);
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;loop &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;match unsafe &lt;&#x2F;span&gt;&lt;span&gt;{ Pin::new_unchecked(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span&gt; fut) }.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;poll&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span&gt; ctx) {
+&lt;&#x2F;span&gt;&lt;span&gt;            Poll::Ready(x) =&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;                &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return&lt;&#x2F;span&gt;&lt;span&gt; x;
+&lt;&#x2F;span&gt;&lt;span&gt;            }
+&lt;&#x2F;span&gt;&lt;span&gt;            Poll::Pending =&amp;gt; {}
+&lt;&#x2F;span&gt;&lt;span&gt;        }
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;main&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;    println!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;fib: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;{}&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;block_on&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;6&lt;&#x2F;span&gt;&lt;span&gt;)));
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;play.rust-lang.org&#x2F;?version=stable&amp;amp;mode=debug&amp;amp;edition=2021&amp;amp;gist=6da92b3be35f15532aee3b7aed3bb771&quot;&gt;Playground&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;It seems to work fine for some simple futures, but would of course crash on anything that wanted to do I&#x2F;O.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Desugaring async functions in Rust</title>
+        <published>2021-08-24T00:00:00+00:00</published>
+        <updated>2021-08-24T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://ambiso.github.io/desugaring-async-fn/"/>
+        <id>https://ambiso.github.io/desugaring-async-fn/</id>
+        
+        <content type="html" xml:base="https://ambiso.github.io/desugaring-async-fn/">&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;ambiso&#x2F;future_without_async&quot;&gt;Here&lt;&#x2F;a&gt; I implemented two simple futures without using &lt;code&gt;async fn&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;a-simple-async-function&quot;&gt;A simple async function&lt;&#x2F;h2&gt;
+&lt;p&gt;We first look at the simplest possible example:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span&gt;async &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;does_nothing&lt;&#x2F;span&gt;&lt;span&gt;() {}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;An &lt;code&gt;async&lt;&#x2F;code&gt; function boils down to a function returning some type that implements the &lt;a href=&quot;https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;std&#x2F;future&#x2F;trait.Future.html#&quot;&gt;&lt;code&gt;Future&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; trait:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;does_nothing_desugared&lt;&#x2F;span&gt;&lt;span&gt;() -&amp;gt; impl Future&amp;lt;Output=()&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;* ... *&#x2F;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The &lt;code&gt;Future&lt;&#x2F;code&gt; trait looks like this:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub trait &lt;&#x2F;span&gt;&lt;span&gt;Future {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span&gt;Output;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;poll&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;: Pin&amp;lt;&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut Self&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;cx&lt;&#x2F;span&gt;&lt;span&gt;: &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut &lt;&#x2F;span&gt;&lt;span&gt;Context&amp;lt;&amp;#39;_&amp;gt;) -&amp;gt; Poll&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;Self::&lt;&#x2F;span&gt;&lt;span&gt;Output&amp;gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;It offers a poll function that an async runtime can call to make progress on the future.
+We can implement this poll function by creating a struct that implements &lt;code&gt;Future&lt;&#x2F;code&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;struct &lt;&#x2F;span&gt;&lt;span&gt;DoesNothingFuture;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;impl &lt;&#x2F;span&gt;&lt;span&gt;Future &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;DoesNothingFuture {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span&gt;Output = ();
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;poll&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;: Pin&amp;lt;&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut Self&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;_cx&lt;&#x2F;span&gt;&lt;span&gt;: &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut &lt;&#x2F;span&gt;&lt;span&gt;Context&amp;lt;&amp;#39;_&amp;gt;) -&amp;gt; Poll&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;Self::&lt;&#x2F;span&gt;&lt;span&gt;Output&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;        Poll::Ready(())
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Here the &lt;code&gt;poll&lt;&#x2F;code&gt; function immediately resolves the future to the empty tuple.
+The alternative would be to return &lt;code&gt;Poll::Pending&lt;&#x2F;code&gt; to signal that it should be
+polled again later. To determine when it should be polled again
+Rust futures have a &lt;a href=&quot;https:&#x2F;&#x2F;rust-lang.github.io&#x2F;async-book&#x2F;02_execution&#x2F;03_wakeups.html&quot;&gt;wakeup mechanism&lt;&#x2F;a&gt;, which I won&#x27;t detail here.&lt;&#x2F;p&gt;
+&lt;p&gt;The &lt;code&gt;does_nothing_desugared&lt;&#x2F;code&gt; function then just has to return a new instance
+of the DoesNothingFuture:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;does_nothing_desugared&lt;&#x2F;span&gt;&lt;span&gt;() -&amp;gt; impl Future&amp;lt;Output=()&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;    DoesNothingFuture {}
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;a-more-complex-example&quot;&gt;A more complex example&lt;&#x2F;h2&gt;
+&lt;p&gt;Now lets try desugaring a more complex async function.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span&gt;async &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;read_file&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;file&lt;&#x2F;span&gt;&lt;span&gt;: &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span&gt; File) -&amp;gt; String {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let mut&lt;&#x2F;span&gt;&lt;span&gt; v = Vec::new();
+&lt;&#x2F;span&gt;&lt;span&gt;    file.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;read_to_end&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span&gt; v).await.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;unwrap&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;    String::from_utf8(v).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;unwrap&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The &lt;code&gt;read_file&lt;&#x2F;code&gt; function is more complex in that it has an argument and awaits another future.
+To translate this function we again need a struct that implements &lt;code&gt;Future&lt;&#x2F;code&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;struct &lt;&#x2F;span&gt;&lt;span&gt;ReadFileFuture&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;a&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;file&lt;&#x2F;span&gt;&lt;span&gt;: &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;a mut&lt;&#x2F;span&gt;&lt;span&gt; File,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;v&lt;&#x2F;span&gt;&lt;span&gt;: Option&amp;lt;Vec&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;u8&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&amp;gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; buffer to store data to
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;state&lt;&#x2F;span&gt;&lt;span&gt;: ReadFileState&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;a&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;_pin&lt;&#x2F;span&gt;&lt;span&gt;: PhantomPinned, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Future is !Unpin
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;enum &lt;&#x2F;span&gt;&lt;span&gt;ReadFileState&amp;lt;&amp;#39;a&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;    State0, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Initial
+&lt;&#x2F;span&gt;&lt;span&gt;    State1(Pin&amp;lt;Box&amp;lt;dyn Future&amp;lt;Output=tokio::io::Result&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;usize&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&amp;gt;+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;a&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&amp;gt;), &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Await ReadToEnd future
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Here we take the reference to the file, a buffer to store the file contents to
+and a state that contains nothing initially, but is then filled by
+the &lt;code&gt;ReadToEnd&lt;&#x2F;code&gt; future when the &lt;code&gt;ReadFileFuture&lt;&#x2F;code&gt; is first polled.
+We explicitly mark the future as &lt;code&gt;!Unpin&lt;&#x2F;code&gt; to avoid it being moved.
+This is necessary since the &lt;code&gt;ReadToEnd&lt;&#x2F;code&gt; future holds references to &lt;code&gt;v&lt;&#x2F;code&gt; and to &lt;code&gt;file&lt;&#x2F;code&gt;.
+Internally we need to use &lt;code&gt;unsafe&lt;&#x2F;code&gt; to circumvent the restrictions of &lt;code&gt;!Unpin&lt;&#x2F;code&gt;.
+Here we must be careful not to move any members that another may hold references to.&lt;&#x2F;p&gt;
+&lt;p&gt;The &lt;code&gt;poll&lt;&#x2F;code&gt; implementation checks which state we are in.
+This roughly corresponds to the different entrypoints of the function:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;the main entrypoint of the function&lt;&#x2F;li&gt;
+&lt;li&gt;points where &lt;code&gt;.await&lt;&#x2F;code&gt; is used in the function&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;impl&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;a&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt; Future &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;ReadFileFuture&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;a&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;type &lt;&#x2F;span&gt;&lt;span&gt;Output = String;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;poll&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;b&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;: Pin&amp;lt;&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;b mut Self&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;cx&lt;&#x2F;span&gt;&lt;span&gt;: &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut &lt;&#x2F;span&gt;&lt;span&gt;Context&amp;lt;&amp;#39;_&amp;gt;) -&amp;gt; Poll&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;Self::&lt;&#x2F;span&gt;&lt;span&gt;Output&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; s = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;unsafe &lt;&#x2F;span&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;as_mut&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;get_unchecked_mut&lt;&#x2F;span&gt;&lt;span&gt;() };
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;loop &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;match&lt;&#x2F;span&gt;&lt;span&gt; s.state {
+&lt;&#x2F;span&gt;&lt;span&gt;                &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Main entrypoint
+&lt;&#x2F;span&gt;&lt;span&gt;                ReadFileState::State0 =&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;                    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; fut = s.file.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;read_to_end&lt;&#x2F;span&gt;&lt;span&gt;(s.v.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;as_mut&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;unwrap&lt;&#x2F;span&gt;&lt;span&gt;());
+&lt;&#x2F;span&gt;&lt;span&gt;                    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; wrapped = Box::pin(fut);
+&lt;&#x2F;span&gt;&lt;span&gt;                    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; new_state = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;unsafe &lt;&#x2F;span&gt;&lt;span&gt;{ std::mem::transmute::&amp;lt;_, ReadFileState&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;a&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&amp;gt;(ReadFileState::State1(wrapped)) };
+&lt;&#x2F;span&gt;&lt;span&gt;                    s.state = new_state;
+&lt;&#x2F;span&gt;&lt;span&gt;                },
+&lt;&#x2F;span&gt;&lt;span&gt;                &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Await ReadToEnd
+&lt;&#x2F;span&gt;&lt;span&gt;                ReadFileState::State1(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;ref mut&lt;&#x2F;span&gt;&lt;span&gt; fut) =&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;                    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; r = fut.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;as_mut&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;poll&lt;&#x2F;span&gt;&lt;span&gt;(cx);
+&lt;&#x2F;span&gt;&lt;span&gt;                    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt; r.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;is_pending&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;                        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;Poll::Pending;
+&lt;&#x2F;span&gt;&lt;span&gt;                    }
+&lt;&#x2F;span&gt;&lt;span&gt;                    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; v = s.v.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;take&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;unwrap&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;                    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;Poll::Ready(String::from_utf8(v).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;unwrap&lt;&#x2F;span&gt;&lt;span&gt;());
+&lt;&#x2F;span&gt;&lt;span&gt;                },
+&lt;&#x2F;span&gt;&lt;span&gt;            }
+&lt;&#x2F;span&gt;&lt;span&gt;        }
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;We can then again simply return an instance of the struct in the desugared function:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;read_file_desugared&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;file&lt;&#x2F;span&gt;&lt;span&gt;: &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span&gt; File) -&amp;gt; impl Future&amp;lt;Output=String&amp;gt; + &amp;#39;_ {
+&lt;&#x2F;span&gt;&lt;span&gt;    ReadFileFuture {
+&lt;&#x2F;span&gt;&lt;span&gt;        file,
+&lt;&#x2F;span&gt;&lt;span&gt;        v: Some(Vec::new()),
+&lt;&#x2F;span&gt;&lt;span&gt;        state: ReadFileState::State0,
+&lt;&#x2F;span&gt;&lt;span&gt;        _pin: PhantomPinned {},
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;I am not 100% sure my use of &lt;code&gt;unsafe&lt;&#x2F;code&gt; is sound here, in fact I would be surprised by it.
+However, the application does run and seems to produce the correct result.&lt;&#x2F;p&gt;
+&lt;p&gt;The transmute is used to convince the compiler to accept a different lifetime for &lt;code&gt;ReadFileState&lt;&#x2F;code&gt;.
+This would likely not be necessary if Rust had support for self-referencing structs.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;acknowledgement&quot;&gt;Acknowledgement&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=9_3krAQtD2k&quot;&gt;Jon Gjengset: The What and How of Futures and async&#x2F;await in Rust&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=DkMwYxfSYNQ&quot;&gt;Jon Gjengset: The Why, What, and How of Pinning in Rust&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;users.rust-lang.org&#x2F;t&#x2F;desugaring-async-fn&#x2F;63698&#x2F;2&quot;&gt;Yandros&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>CSCG2021 Secure Bank (writeup)</title>
+        <published>2021-06-06T00:00:00+00:00</published>
+        <updated>2021-06-06T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://ambiso.github.io/cscg-2021-secure-bank/"/>
+        <id>https://ambiso.github.io/cscg-2021-secure-bank/</id>
+        
+        <content type="html" xml:base="https://ambiso.github.io/cscg-2021-secure-bank/">&lt;p&gt;In the &lt;a href=&quot;https:&#x2F;&#x2F;earth.cscg.live&#x2F;tasks&#x2F;secure-bank&quot;&gt;&quot;Secure Bank&quot;&lt;&#x2F;a&gt; challenge of the Cyber Security Challenge Germany (CSCG) 2021
+we are presented with a protocol that is meant to ensure that
+we can only login if we know a certain PIN.&lt;&#x2F;p&gt;
+&lt;p&gt;In a real world application this PIN could be generated as in &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Time-based_One-Time_Password&quot;&gt;TOTP&lt;&#x2F;a&gt;s that are used for 2 factor authentication.
+In the challenge the PIN is simply generated randomly:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span&gt;challenge = os.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;urandom&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;32&lt;&#x2F;span&gt;&lt;span&gt;).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;hex&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;msg = &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Challenge: &lt;&#x2F;span&gt;&lt;span&gt;&amp;#39; + challenge
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;pin = rng.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;randint&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0000&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;9999&lt;&#x2F;span&gt;&lt;span&gt;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Random PIN
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;run_protocol&lt;&#x2F;span&gt;&lt;span&gt;(pin, msg)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The protocol that the server runs is executed with a message and a PIN.
+The protocol resembles a password based authenticated key exchange (PAKE)
+since a shared secret that is bound to the PIN is obtained.
+Normally, we would have to know the PIN to compute the shared secret.
+However, a flaw lets us guess and check every possible PIN.
+The shared secret is then used to encrypt the challenge message,
+and the resulting ciphertext is sent to the client.
+The client is supposed to send back the challenge.
+In short: if we can obtain the random challenge from a run of the protocol we win✨.&lt;&#x2F;p&gt;
+&lt;p&gt;The challenge description also advises us not to try an online brute-force attack.
+To enforce this we actually have to recover the challenge twice from two consecutive protocol runs,
+where each has a randomly chosen PIN.
+That&#x27;s \(10000^2 = 100\) million possible combinations!
+Assuming 30 online guesses per second it would take 38.58 days to perform this many guesses.
+Even with 100 million guesses we only have a
+probability of success of \(1-(1-\frac{1}{10000^2})^{10^8}\approx 0.63 = 63\%\).
+Therefore it seems much more economical (and fun!) to actually try and break the challenge.&lt;&#x2F;p&gt;
+&lt;p&gt;The protocol makes use of DH parameters from &lt;a href=&quot;https:&#x2F;&#x2F;www.ietf.org&#x2F;rfc&#x2F;rfc3526.txt&quot;&gt;RFC 3526&lt;&#x2F;a&gt;
+using a generator \(g=2\) and computes everything modulo some large prime.&lt;&#x2F;p&gt;
+&lt;p&gt;The protocol asks for three values from the client:
+The first two are an email address (that is used as a user ID) and a public parameter
+that is presumably generated by the generator \(g\).&lt;&#x2F;p&gt;
+&lt;p&gt;The client performs the following steps:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;generate a &lt;code&gt;user_id&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;generate a secret \(x_a \in \mathbb{Z}_p\) where \(p\) is the large known prime&lt;&#x2F;li&gt;
+&lt;li&gt;compute the public parameter \(c_{\mathrm{pub}} = g^{x_a}\)&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The &lt;code&gt;user_id&lt;&#x2F;code&gt; and the public parameter \(c_{\mathrm{pub}}\) are sent to the server.&lt;&#x2F;p&gt;
+&lt;p&gt;The server then computes a bunch of values.
+You can skip over them, but here they are for completeness sake:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;\(\mathrm{id}_a = g^{H(\mathrm{user\_id})}\)&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;\(m_c = \mathrm{id}_a^{-\mathrm{pin}}\)&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;\(t_a = c_{\mathrm{pub}} \cdot m_c\)&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;\(m_s = \mathrm{id}_b^{\mathrm{pin}}\)&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;sample a random \(r_b \in \mathbb{Z}_p\)&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;\(t_b = g^{r_b}\)&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;\(s_{\mathrm{pub}} = t_b \cdot m_s\)&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The shared secret is computed as:&lt;&#x2F;p&gt;
+&lt;p&gt;$$z = t_a^{r_b}$$&lt;&#x2F;p&gt;
+&lt;p&gt;However, \(z\) alone is not sufficient:
+the key is computed as the hash of all values that occurred in the protocol run:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;### Calculate shared secret
+&lt;&#x2F;span&gt;&lt;span&gt;z = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dh_exchange&lt;&#x2F;span&gt;&lt;span&gt;(t_a, r_b)
+&lt;&#x2F;span&gt;&lt;span&gt;key = SHA256.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;new&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;long_to_bytes&lt;&#x2F;span&gt;&lt;span&gt;(id_a) + &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;long_to_bytes&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ID_SERVER&lt;&#x2F;span&gt;&lt;span&gt;) + &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;long_to_bytes&lt;&#x2F;span&gt;&lt;span&gt;(user_pub) + &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;long_to_bytes&lt;&#x2F;span&gt;&lt;span&gt;(server_pub) + &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;long_to_bytes&lt;&#x2F;span&gt;&lt;span&gt;(pin) + &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;long_to_bytes&lt;&#x2F;span&gt;&lt;span&gt;(z)).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;digest&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Luckily, we already know &lt;code&gt;id_a&lt;&#x2F;code&gt;, &lt;code&gt;ID_SERVER&lt;&#x2F;code&gt;, &lt;code&gt;user_pub&lt;&#x2F;code&gt; (=\(c_{\mathrm{pub}}\)), &lt;code&gt;server_pub&lt;&#x2F;code&gt; (=\(s_{\mathrm{pub}}\)).
+The only values that are missing are &lt;code&gt;pin&lt;&#x2F;code&gt; and &lt;code&gt;z&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;A major flaw that lets us abuse this protocol is
+that we know the discrete logarithm of the server&#x27;s public
+parameter from the implementation:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ID_SERVER &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dh_genpub&lt;&#x2F;span&gt;&lt;span&gt;(int.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;from_bytes&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;b&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;server&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;, &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;big&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;))
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The discrete logarithm is simply &lt;code&gt;int.from_bytes(b&#x27;server&#x27;, &#x27;big&#x27;)&lt;&#x2F;code&gt;!&lt;&#x2F;p&gt;
+&lt;p&gt;Using this information we can perform an offline brute force attack on the PIN
+by computing a candidate \(g^{\hat{r}_b}\) as:&lt;&#x2F;p&gt;
+&lt;p&gt;\(g^{\hat{r}_{b}} = s_{\mathrm{pub}} &#x2F; g^{x_b \cdot \mathrm{pin}}\)&lt;&#x2F;p&gt;
+&lt;p&gt;We can compute this value because \(x_b\), the server&#x27;s private part was made public.
+The above formula follows from the last computation in the server:&lt;&#x2F;p&gt;
+&lt;p&gt;$$\begin{aligned}
+s_\mathit{pub}&amp;amp;=t_b \cdot m_s \\
+&amp;amp;=g^{r_b} \cdot {\left(g^{x_b}\right)}^{\mathrm{pin}}
+\end{aligned}$$&lt;&#x2F;p&gt;
+&lt;p&gt;By guessing the PIN we obtain a candidate \(g^{\hat{r}_{b}}\).
+We can then compute a candidate \(\hat{z}\) as:&lt;&#x2F;p&gt;
+&lt;p&gt;$$\hat{z} = {\left(g^{\hat{r}_{b}}\right)}^{x_a - \mathrm{pin} \cdot H(\mathrm{user\_id})}.$$&lt;&#x2F;p&gt;
+&lt;p&gt;Using this candidate \(\hat{z}\) and the guessed PIN
+we can derive a symmetric key to decrypt the received ciphertext.
+We can check whether the key is correct by comparing the decrypted text
+against the known plaintext prefix &quot;Challenge: &quot;.&lt;&#x2F;p&gt;
+&lt;p&gt;Voilà! Now we need 5000 &lt;em&gt;offline&lt;&#x2F;em&gt; guesses in expectation to recover the correct PIN!
+Therefore this completely breaks the security of the protocol:
+a PAKE should prevent an adversary from guessing offline.&lt;&#x2F;p&gt;
+&lt;p&gt;The flaw we discovered is analogous to one that can occur &quot;in the real world&quot; with SPAKE2
+and the challenge description hints at this: &quot;The &lt;strong&gt;SP&lt;&#x2F;strong&gt; b&lt;strong&gt;A&lt;&#x2F;strong&gt;n&lt;strong&gt;K&lt;&#x2F;strong&gt; &lt;strong&gt;E2&lt;&#x2F;strong&gt; introduced a new protocol [...]&quot;.
+I&#x27;ve also found a blog post detailing this issue &lt;a href=&quot;https:&#x2F;&#x2F;www.lothar.com&#x2F;blog&#x2F;54-spake2-random-elements&#x2F;&quot;&gt;here&lt;&#x2F;a&gt;.
+It also describes how one could pick arbitrary public parameters for which nobody knows the discrete logarithm.
+This is possible, since the server never actually uses the discrete log in the protocol.
+Therefore it is sufficient to have a single public value that everyone trusts - but nobody has its discrete log.&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;full-exploit&quot;&gt;Full Exploit&lt;&#x2F;h1&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;from &lt;&#x2F;span&gt;&lt;span&gt;Crypto.Hash &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;SHA256
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;from &lt;&#x2F;span&gt;&lt;span&gt;gmpy2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;powmod
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;pwnlib
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;s = pwnlib.tubes.process.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;process&lt;&#x2F;span&gt;&lt;span&gt;(&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;ncat --ssl xxx-secure-bank.challenge.broker.cscg.live 31337&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;split&lt;&#x2F;span&gt;&lt;span&gt;())
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;user_id = &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Some ID&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;email_hash = SHA256.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;new&lt;&#x2F;span&gt;&lt;span&gt;(user_id.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;encode&lt;&#x2F;span&gt;&lt;span&gt;()).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;digest&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;email_num = int.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;from_bytes&lt;&#x2F;span&gt;&lt;span&gt;(email_hash, &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;big&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;from &lt;&#x2F;span&gt;&lt;span&gt;server &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;*
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;#user_pub = pow(email_num, -1, server.PRIME)
+&lt;&#x2F;span&gt;&lt;span&gt;user_x = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1337
+&lt;&#x2F;span&gt;&lt;span&gt;user_pub = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;powmod&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;GEN&lt;&#x2F;span&gt;&lt;span&gt;, user_x, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;PRIME&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;id_a = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;powmod&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;GEN&lt;&#x2F;span&gt;&lt;span&gt;, email_num, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;PRIME&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;server_x = int.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;from_bytes&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;b&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;server&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;, &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;big&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;break_pin&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;server_pub&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;enc&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;known_plaintext&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;pin &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;in &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;range&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;10000&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;print&lt;&#x2F;span&gt;&lt;span&gt;(pin)
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Compute candidate g_rb
+&lt;&#x2F;span&gt;&lt;span&gt;        g_rb = (server_pub * &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;powmod&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;powmod&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;GEN&lt;&#x2F;span&gt;&lt;span&gt;, server_x * pin, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;PRIME&lt;&#x2F;span&gt;&lt;span&gt;), -&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;PRIME&lt;&#x2F;span&gt;&lt;span&gt;)) % &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;PRIME
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Compute candidate z
+&lt;&#x2F;span&gt;&lt;span&gt;        z = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;powmod&lt;&#x2F;span&gt;&lt;span&gt;(g_rb, user_x + -pin * email_num, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;PRIME&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;        key = SHA256.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;new&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;long_to_bytes&lt;&#x2F;span&gt;&lt;span&gt;(id_a) + &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;long_to_bytes&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ID_SERVER&lt;&#x2F;span&gt;&lt;span&gt;) + &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;long_to_bytes&lt;&#x2F;span&gt;&lt;span&gt;(user_pub) + &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;long_to_bytes&lt;&#x2F;span&gt;&lt;span&gt;(server_pub) + &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;long_to_bytes&lt;&#x2F;span&gt;&lt;span&gt;(pin) + &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;long_to_bytes&lt;&#x2F;span&gt;&lt;span&gt;(z)).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;digest&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Test pin against known plaintext
+&lt;&#x2F;span&gt;&lt;span&gt;        aes = AES.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;new&lt;&#x2F;span&gt;&lt;span&gt;(key, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;AES&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;MODE_ECB&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;        dec = aes.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;decrypt&lt;&#x2F;span&gt;&lt;span&gt;(enc)
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span&gt;known_plaintext in dec:
+&lt;&#x2F;span&gt;&lt;span&gt;            dec = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;str&lt;&#x2F;span&gt;&lt;span&gt;(Padding.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;unpad&lt;&#x2F;span&gt;&lt;span&gt;(dec, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;16&lt;&#x2F;span&gt;&lt;span&gt;), &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;utf-8&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;)
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;print&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;f&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Decrypted: &lt;&#x2F;span&gt;&lt;span&gt;{dec}&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;            challenge = dec[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;len&lt;&#x2F;span&gt;&lt;span&gt;(known_plaintext):]
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;challenge
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;print&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;PIN not found&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;do_break&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;known_plaintext&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    s.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;sendline&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;f&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;{user_id}&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;    s.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;sendline&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;f&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;{user_pub}&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;print&lt;&#x2F;span&gt;&lt;span&gt;(s.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;recvline&lt;&#x2F;span&gt;&lt;span&gt;())
+&lt;&#x2F;span&gt;&lt;span&gt;    server_pub = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span&gt;(s.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;recvline&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;split&lt;&#x2F;span&gt;&lt;span&gt;()[-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;])
+&lt;&#x2F;span&gt;&lt;span&gt;    enc = bytes.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;fromhex&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;str&lt;&#x2F;span&gt;&lt;span&gt;(s.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;recvline&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;split&lt;&#x2F;span&gt;&lt;span&gt;()[-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;], &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;utf-8&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;))
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;break_pin&lt;&#x2F;span&gt;&lt;span&gt;(server_pub, enc, known_plaintext)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;s.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;sendline&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;f&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;do_break&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;b&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Challenge: &lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;)}&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;do_break&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;b&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;CSCG{&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h1 id=&quot;see-also&quot;&gt;See Also&lt;&#x2F;h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.lothar.com&#x2F;blog&#x2F;54-spake2-random-elements&#x2F;&quot;&gt;https:&#x2F;&#x2F;www.lothar.com&#x2F;blog&#x2F;54-spake2-random-elements&#x2F;&lt;&#x2F;a&gt; (&lt;a href=&quot;https:&#x2F;&#x2F;web.archive.org&#x2F;web&#x2F;20210226042526&#x2F;https:&#x2F;&#x2F;www.lothar.com&#x2F;blog&#x2F;54-spake2-random-elements&#x2F;&quot;&gt;archived&lt;&#x2F;a&gt;)&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Z-Order Curve Visualization</title>
+        <published>2021-05-30T00:00:00+00:00</published>
+        <updated>2021-05-30T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://ambiso.github.io/z-order-curve/"/>
+        <id>https://ambiso.github.io/z-order-curve/</id>
+        
+        <content type="html" xml:base="https://ambiso.github.io/z-order-curve/">&lt;p&gt;A visualization of a 3D &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Z-order_curve&quot;&gt;Z-order curve&lt;&#x2F;a&gt;.
+Doesn&#x27;t really work on mobile - use the mouse to rotate the view.&lt;&#x2F;p&gt;
+&lt;p&gt;A friend of mine asked me about optimizing matrix multiplication.
+One way to obtain better cache locality is to use space filling curves.&lt;&#x2F;p&gt;
+&lt;iframe src=&quot;zoc.html&quot; width=&quot;800&quot; height=&quot;800&quot;&gt;
+&lt;&#x2F;iframe&gt;
+&lt;p&gt;I made this visualization using &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;JuliaPlots&#x2F;WGLMakie.jl&quot;&gt;WGLMakie&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;SimonDanisch&#x2F;JSServe.jl&quot;&gt;JSServe.jl&lt;&#x2F;a&gt; in &lt;a href=&quot;https:&#x2F;&#x2F;julialang.org&#x2F;&quot;&gt;Julia&lt;&#x2F;a&gt;.
+We can convert between points in \(\{0,\ldots,2^{3 \cdot n}-1\}\) and \(\left(\{0,\ldots,2^n-1\}\right)^3\) by interleaving the bits.
+This is described in more detail on the &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Z-order_curve#Coordinate_values&quot;&gt;Wikipedia&lt;&#x2F;a&gt; page.
+The &lt;code&gt;zoc2p&lt;&#x2F;code&gt; function implements this mapping.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;julia&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-julia &quot;&gt;&lt;code class=&quot;language-julia&quot; data-lang=&quot;julia&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;function &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;zoc2p&lt;&#x2F;span&gt;&lt;span&gt;(zoc, digits_per_coordinate, dim)
+&lt;&#x2F;span&gt;&lt;span&gt;    p = digits(zoc, base=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;, pad=dim * digits_per_coordinate)
+&lt;&#x2F;span&gt;&lt;span&gt;    mapslices(reshape(p, :, digits_per_coordinate); dims=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;do&lt;&#x2F;span&gt;&lt;span&gt; x
+&lt;&#x2F;span&gt;&lt;span&gt;        sum(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;^(i-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;) * x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;(i,x) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;in&lt;&#x2F;span&gt;&lt;span&gt; enumerate(x))
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Here, &lt;code&gt;dim&lt;&#x2F;code&gt; is the number of dimensions of the z-order curve and &lt;code&gt;digits_per_coordinate&lt;&#x2F;code&gt; corresponds to \(n\).
+We then enumerate all points in \(\{0,\ldots,2^{3 \cdot n}-1\}\) and send them through the function to obtain the corresponding point in 3D space:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;julia&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-julia &quot;&gt;&lt;code class=&quot;language-julia&quot; data-lang=&quot;julia&quot;&gt;&lt;span&gt;v = vcat([zoc&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;p(i, digits_per_coordinate, dim)&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for&lt;&#x2F;span&gt;&lt;span&gt; i=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;^(digits_per_coordinate*dim)-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;]...)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Here&#x27;s the full plotting function:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;julia&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-julia &quot;&gt;&lt;code class=&quot;language-julia&quot; data-lang=&quot;julia&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;function &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;plt&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;    set_theme!(resolution=(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;800&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;800&lt;&#x2F;span&gt;&lt;span&gt;))
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    app = App() &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;do&lt;&#x2F;span&gt;&lt;span&gt; s::Session
+&lt;&#x2F;span&gt;&lt;span&gt;        digits_per_coordinate = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;3
+&lt;&#x2F;span&gt;&lt;span&gt;        dim = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;3
+&lt;&#x2F;span&gt;&lt;span&gt;        v = vcat([zoc&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;p(i, digits_per_coordinate, dim)&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for&lt;&#x2F;span&gt;&lt;span&gt; i=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;^(digits_per_coordinate*dim)-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;]...)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        xs = v[:, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;]
+&lt;&#x2F;span&gt;&lt;span&gt;        ys = v[:, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;]
+&lt;&#x2F;span&gt;&lt;span&gt;        zs = v[:, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span&gt;]
+&lt;&#x2F;span&gt;&lt;span&gt;        progress = (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;:length(xs)-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;).&#x2F;(length(xs)-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        fig, ax, splot = lines(xs, ys, zs, linewidth=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;50&lt;&#x2F;span&gt;&lt;span&gt;, color=progress, colormap=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;:rainbow&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        DOM.div(fig)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    page = Page(offline=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span&gt;, exportable=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    page_html = sprint() &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;do&lt;&#x2F;span&gt;&lt;span&gt; io
+&lt;&#x2F;span&gt;&lt;span&gt;        show(io, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;MIME&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;text&#x2F;html&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;(), page)
+&lt;&#x2F;span&gt;&lt;span&gt;        show(io, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;MIME&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;text&#x2F;html&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;(), app)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    write(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;export&#x2F;index.html&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, page_html)
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;code&gt;JSServe&lt;&#x2F;code&gt; then allows us to export the plot as a static webpage, and it&#x27;s the one you see above embedded as an &lt;code&gt;iframe&lt;&#x2F;code&gt;!&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Hedged Fiat-Shamir Signatures (slides)</title>
+        <published>2020-05-06T00:00:00+00:00</published>
+        <updated>2020-05-06T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://ambiso.github.io/hedged-fiat-shamir/"/>
+        <id>https://ambiso.github.io/hedged-fiat-shamir/</id>
+        
+        <content type="html" xml:base="https://ambiso.github.io/hedged-fiat-shamir/">&lt;iframe src=&quot;.&#x2F;tud-2020-hedged-fiat-shamir.pdf&quot; style=&quot;width: 100%; aspect-ratio: 16&#x2F;9;&quot;&gt;&lt;&#x2F;iframe&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Symbolic Execution (seminar paper)</title>
+        <published>2019-03-05T00:00:00+00:00</published>
+        <updated>2019-03-05T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://ambiso.github.io/symbolic-execution-paper/"/>
+        <id>https://ambiso.github.io/symbolic-execution-paper/</id>
+        
+        <content type="html" xml:base="https://ambiso.github.io/symbolic-execution-paper/">&lt;p&gt;A &lt;a href=&quot;https:&#x2F;&#x2F;ambiso.github.io&#x2F;symbolic-execution-paper&#x2F;.&#x2F;semsec-2019.pdf&quot;&gt;seminar paper&lt;&#x2F;a&gt; on symbolic execution.&lt;&#x2F;p&gt;
+&lt;iframe src=&quot;.&#x2F;semsec-2019.pdf&quot; style=&quot;width: 100%; aspect-ratio: 100&#x2F;141;&quot;&gt;&lt;&#x2F;iframe&gt;</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>CBC Padding Oracle Attack (slides)</title>
+        <published>2018-10-22T00:00:00+00:00</published>
+        <updated>2018-10-22T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://ambiso.github.io/cbc-padding-oracle-challenge/"/>
+        <id>https://ambiso.github.io/cbc-padding-oracle-challenge/</id>
+        
+        <content type="html" xml:base="https://ambiso.github.io/cbc-padding-oracle-challenge/">&lt;iframe src=&quot;.&#x2F;meepwnctf-2018-esor.pdf&quot; style=&quot;width: 100%; aspect-ratio: 16&#x2F;9;&quot;&gt;&lt;&#x2F;iframe&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Generating Adversarial Examples - Challenge Writeup (slides)</title>
+        <published>2018-06-06T00:00:00+00:00</published>
+        <updated>2018-06-06T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://ambiso.github.io/adversarial-machine-learning-challenge/"/>
+        <id>https://ambiso.github.io/adversarial-machine-learning-challenge/</id>
+        
+        <content type="html" xml:base="https://ambiso.github.io/adversarial-machine-learning-challenge/">&lt;p&gt;&quot;Jodlgang&quot; is a challenge at the 2018 FAUST CTF.&lt;&#x2F;p&gt;
+&lt;p&gt;From the challenge description:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The Jodlgang platfrom replaced the old password login for a state-of-the-art face authentication system. To sign in, a patron must provide an image of his face alongside his email address. The face snap must be a color image of size 224x224 pixels and must not be larger than 1MB.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Luckily we are given the neural network architecture and its weight that are used to recognize faces.
+This means we can use backpropagation to generate an image that look like a desired person - at least to the neural network.&lt;&#x2F;p&gt;
+&lt;p&gt;More in the &lt;a href=&quot;https:&#x2F;&#x2F;ambiso.github.io&#x2F;adversarial-machine-learning-challenge&#x2F;.&#x2F;faustctf-2018-jodlgang.pdf&quot;&gt;presentation&lt;&#x2F;a&gt; I made on this challenge.&lt;&#x2F;p&gt;
+&lt;iframe src=&quot;.&#x2F;faustctf-2018-jodlgang.pdf&quot; style=&quot;width: 100%; aspect-ratio: 16&#x2F;9;&quot;&gt;&lt;&#x2F;iframe&gt;
+</content>
+        
+    </entry>
+</feed>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>ambiso&#x27;s blog - verification</title>
+    <subtitle>excursions into security, cryptography and math</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://ambiso.github.io/categories/verification/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://ambiso.github.io"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2019-03-05T00:00:00+00:00</updated>
+    <id>https://ambiso.github.io/categories/verification/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Symbolic Execution (seminar paper)</title>
+        <published>2019-03-05T00:00:00+00:00</published>
+        <updated>2019-03-05T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://ambiso.github.io/symbolic-execution-paper/"/>
+        <id>https://ambiso.github.io/symbolic-execution-paper/</id>
+        
+        <content type="html" xml:base="https://ambiso.github.io/symbolic-execution-paper/">&lt;p&gt;A &lt;a href=&quot;https:&#x2F;&#x2F;ambiso.github.io&#x2F;symbolic-execution-paper&#x2F;.&#x2F;semsec-2019.pdf&quot;&gt;seminar paper&lt;&#x2F;a&gt; on symbolic execution.&lt;&#x2F;p&gt;
+&lt;iframe src=&quot;.&#x2F;semsec-2019.pdf&quot; style=&quot;width: 100%; aspect-ratio: 100&#x2F;141;&quot;&gt;&lt;&#x2F;iframe&gt;</content>
+        
+    </entry>
+</feed>

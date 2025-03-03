@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+      <title>ambiso&#x27;s blog - verification</title>
+      <link>https://ambiso.github.io</link>
+      <description>excursions into security, cryptography and math</description>
+      <generator>Zola</generator>
+      <language>en</language>
+      <atom:link href="https://ambiso.github.io/categories/verification/rss.xml" rel="self" type="application/rss+xml"/>
+      <lastBuildDate>Tue, 05 Mar 2019 00:00:00 +0000</lastBuildDate>
+      <item>
+          <title>Symbolic Execution (seminar paper)</title>
+          <pubDate>Tue, 05 Mar 2019 00:00:00 +0000</pubDate>
+          <author>Unknown</author>
+          <link>https://ambiso.github.io/symbolic-execution-paper/</link>
+          <guid>https://ambiso.github.io/symbolic-execution-paper/</guid>
+          <description xml:base="https://ambiso.github.io/symbolic-execution-paper/">&lt;p&gt;A &lt;a href=&quot;https:&#x2F;&#x2F;ambiso.github.io&#x2F;symbolic-execution-paper&#x2F;.&#x2F;semsec-2019.pdf&quot;&gt;seminar paper&lt;&#x2F;a&gt; on symbolic execution.&lt;&#x2F;p&gt;
+&lt;iframe src=&quot;.&#x2F;semsec-2019.pdf&quot; style=&quot;width: 100%; aspect-ratio: 100&#x2F;141;&quot;&gt;&lt;&#x2F;iframe&gt;</description>
+      </item>
+    </channel>
+</rss>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>ambiso&#x27;s blog - machine learning</title>
+    <subtitle>excursions into security, cryptography and math</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://ambiso.github.io/categories/machine-learning/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://ambiso.github.io"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2018-06-06T00:00:00+00:00</updated>
+    <id>https://ambiso.github.io/categories/machine-learning/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Generating Adversarial Examples - Challenge Writeup (slides)</title>
+        <published>2018-06-06T00:00:00+00:00</published>
+        <updated>2018-06-06T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://ambiso.github.io/adversarial-machine-learning-challenge/"/>
+        <id>https://ambiso.github.io/adversarial-machine-learning-challenge/</id>
+        
+        <content type="html" xml:base="https://ambiso.github.io/adversarial-machine-learning-challenge/">&lt;p&gt;&quot;Jodlgang&quot; is a challenge at the 2018 FAUST CTF.&lt;&#x2F;p&gt;
+&lt;p&gt;From the challenge description:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The Jodlgang platfrom replaced the old password login for a state-of-the-art face authentication system. To sign in, a patron must provide an image of his face alongside his email address. The face snap must be a color image of size 224x224 pixels and must not be larger than 1MB.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Luckily we are given the neural network architecture and its weight that are used to recognize faces.
+This means we can use backpropagation to generate an image that look like a desired person - at least to the neural network.&lt;&#x2F;p&gt;
+&lt;p&gt;More in the &lt;a href=&quot;https:&#x2F;&#x2F;ambiso.github.io&#x2F;adversarial-machine-learning-challenge&#x2F;.&#x2F;faustctf-2018-jodlgang.pdf&quot;&gt;presentation&lt;&#x2F;a&gt; I made on this challenge.&lt;&#x2F;p&gt;
+&lt;iframe src=&quot;.&#x2F;faustctf-2018-jodlgang.pdf&quot; style=&quot;width: 100%; aspect-ratio: 16&#x2F;9;&quot;&gt;&lt;&#x2F;iframe&gt;
+</content>
+        
+    </entry>
+</feed>

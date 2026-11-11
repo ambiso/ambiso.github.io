@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+      <title>Desugaring async functions in Rust - ambiso&#x27;s blog</title>
+
+      
+        
+          <link rel="alternate" type="application/atom+xml" title="RSS" href="https://ambiso.github.io/atom.xml">
+        
+          <link rel="alternate" type="application/rss+xml" title="RSS" href="https://ambiso.github.io/rss.xml">
+        
+      
+
+
+      
+          <link rel="stylesheet" href="https://ambiso.github.io/site.css">
+          
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+          
+      
+
+      
+      
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/slideout/1.0.1/slideout.min.js" defer></script>
+          
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous" defer>
+
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/mathtex-script-type.min.js" integrity="sha384-zWYbd0NBwgTsgIdFKVprSfTh1mbMPe5Hz1X3yY4Sd1h/K1cQoUe36OGwAGz/PcDy" crossorigin="anonymous"></script>
+              
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"
+                  onload="renderMathInElement(document.body);"></script>
+              
+          
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+        
+    
+        
+                
+                    <header>
+                        <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;ambiso.github.io">
+                                <span itemprop="name">Home
+                                </span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;ambiso.github.io&#x2F;categories">
+                                <span itemprop="name">Categories
+                                </span></a>
+                        
+                        </nav>
+                    </header>
+                
+            
+    
+
+<article itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+        <h1 itemprop="headline">Desugaring async functions in Rust</h1>
+        <span class="muted">
+    <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>3 minute read</span>
+    <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2021-08-24
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p><a rel="external" href="https://github.com/ambiso/future_without_async">Here</a> I implemented two simple futures without using <code>async fn</code>.</p>
+<h2 id="a-simple-async-function">A simple async function</h2>
+<p>We first look at the simplest possible example:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="rust"><span class="giallo-l"><span style="color: #F97583;">async fn</span><span style="color: #B392F0;"> does_nothing</span><span>() {}</span></span></code></pre>
+<p>An <code>async</code> function boils down to a function returning some type that implements the <a rel="external" href="https://doc.rust-lang.org/std/future/trait.Future.html#"><code>Future</code></a> trait:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="rust"><span class="giallo-l"><span style="color: #F97583;">fn</span><span style="color: #B392F0;"> does_nothing_desugared</span><span>()</span><span style="color: #F97583;"> -&gt; impl</span><span style="color: #B392F0;"> Future</span><span>&lt;</span><span style="color: #B392F0;">Output</span><span style="color: #F97583;">=</span><span>()&gt; {</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    /* ... */</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>The <code>Future</code> trait looks like this:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="rust"><span class="giallo-l"><span style="color: #F97583;">pub trait</span><span style="color: #B392F0;"> Future</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    type</span><span style="color: #B392F0;"> Output</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    fn</span><span style="color: #B392F0;"> poll</span><span>(</span><span style="color: #79B8FF;">self</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> Pin</span><span>&lt;</span><span style="color: #F97583;">&amp;mut</span><span style="color: #79B8FF;"> Self</span><span>&gt;, cx</span><span style="color: #F97583;">: &amp;mut</span><span style="color: #B392F0;"> Context</span><span>&lt;&#39;</span><span style="color: #B392F0;">_</span><span>&gt;)</span><span style="color: #F97583;"> -&gt;</span><span style="color: #B392F0;"> Poll</span><span>&lt;</span><span style="color: #79B8FF;">Self</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">Output</span><span>&gt;;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>It offers a poll function that an async runtime can call to make progress on the future.
+We can implement this poll function by creating a struct that implements <code>Future</code>:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="rust"><span class="giallo-l"><span style="color: #F97583;">struct</span><span style="color: #B392F0;"> DoesNothingFuture</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">impl</span><span style="color: #B392F0;"> Future</span><span style="color: #F97583;"> for</span><span style="color: #B392F0;"> DoesNothingFuture</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    type</span><span style="color: #B392F0;"> Output</span><span style="color: #F97583;"> =</span><span> ();</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    fn</span><span style="color: #B392F0;"> poll</span><span>(</span><span style="color: #79B8FF;">self</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> Pin</span><span>&lt;</span><span style="color: #F97583;">&amp;mut</span><span style="color: #79B8FF;"> Self</span><span>&gt;, _cx</span><span style="color: #F97583;">: &amp;mut</span><span style="color: #B392F0;"> Context</span><span>&lt;&#39;</span><span style="color: #B392F0;">_</span><span>&gt;)</span><span style="color: #F97583;"> -&gt;</span><span style="color: #B392F0;"> Poll</span><span>&lt;</span><span style="color: #79B8FF;">Self</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">Output</span><span>&gt; {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        Poll</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">Ready</span><span>(())</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Here the <code>poll</code> function immediately resolves the future to the empty tuple.
+The alternative would be to return <code>Poll::Pending</code> to signal that it should be
+polled again later. To determine when it should be polled again
+Rust futures have a <a rel="external" href="https://rust-lang.github.io/async-book/02_execution/03_wakeups.html">wakeup mechanism</a>, which I won't detail here.</p>
+<p>The <code>does_nothing_desugared</code> function then just has to return a new instance
+of the DoesNothingFuture:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="rust"><span class="giallo-l"><span style="color: #F97583;">fn</span><span style="color: #B392F0;"> does_nothing_desugared</span><span>()</span><span style="color: #F97583;"> -&gt; impl</span><span style="color: #B392F0;"> Future</span><span>&lt;</span><span style="color: #B392F0;">Output</span><span style="color: #F97583;">=</span><span>()&gt; {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    DoesNothingFuture</span><span> {}</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="a-more-complex-example">A more complex example</h2>
+<p>Now lets try desugaring a more complex async function.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="rust"><span class="giallo-l"><span style="color: #F97583;">async fn</span><span style="color: #B392F0;"> read_file</span><span>(file</span><span style="color: #F97583;">: &amp;mut</span><span style="color: #B392F0;"> File</span><span>)</span><span style="color: #F97583;"> -&gt;</span><span style="color: #B392F0;"> String</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    let mut</span><span> v</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> Vec</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">new</span><span>();</span></span>
+<span class="giallo-l"><span>    file</span><span style="color: #F97583;">.</span><span style="color: #B392F0;">read_to_end</span><span>(</span><span style="color: #F97583;">&amp;mut</span><span> v)</span><span style="color: #F97583;">.await.</span><span style="color: #B392F0;">unwrap</span><span>();</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    String</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">from_utf8</span><span>(v)</span><span style="color: #F97583;">.</span><span style="color: #B392F0;">unwrap</span><span>()</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>The <code>read_file</code> function is more complex in that it has an argument and awaits another future.
+To translate this function we again need a struct that implements <code>Future</code>:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="rust"><span class="giallo-l"><span style="color: #F97583;">struct</span><span style="color: #B392F0;"> ReadFileFuture</span><span>&lt;&#39;</span><span style="color: #B392F0;">a</span><span>&gt; {</span></span>
+<span class="giallo-l"><span>    file</span><span style="color: #F97583;">: &amp;</span><span>&#39;</span><span style="color: #B392F0;">a</span><span style="color: #F97583;"> mut</span><span style="color: #B392F0;"> File</span><span>,</span></span>
+<span class="giallo-l"><span>    v</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> Option</span><span>&lt;</span><span style="color: #B392F0;">Vec</span><span>&lt;</span><span style="color: #B392F0;">u8</span><span>&gt;&gt;,</span><span style="color: #6A737D;"> // buffer to store data to</span></span>
+<span class="giallo-l"><span>    state</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> ReadFileState</span><span>&lt;&#39;</span><span style="color: #B392F0;">a</span><span>&gt;,</span></span>
+<span class="giallo-l"><span>    _pin</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> PhantomPinned</span><span>,</span><span style="color: #6A737D;"> // Future is !Unpin</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">enum</span><span style="color: #B392F0;"> ReadFileState</span><span>&lt;&#39;</span><span style="color: #B392F0;">a</span><span>&gt; {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    State0</span><span>,</span><span style="color: #6A737D;"> // Initial</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    State1</span><span>(</span><span style="color: #B392F0;">Pin</span><span>&lt;</span><span style="color: #B392F0;">Box</span><span>&lt;</span><span style="color: #F97583;">dyn</span><span style="color: #B392F0;"> Future</span><span>&lt;</span><span style="color: #B392F0;">Output</span><span style="color: #F97583;">=</span><span>tokio</span><span style="color: #F97583;">::</span><span>io</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">Result</span><span>&lt;</span><span style="color: #B392F0;">usize</span><span>&gt;&gt;</span><span style="color: #F97583;">+</span><span>&#39;</span><span style="color: #B392F0;">a</span><span>&gt;&gt;),</span><span style="color: #6A737D;"> // Await ReadToEnd future</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Here we take the reference to the file, a buffer to store the file contents to
+and a state that contains nothing initially, but is then filled by
+the <code>ReadToEnd</code> future when the <code>ReadFileFuture</code> is first polled.
+We explicitly mark the future as <code>!Unpin</code> to avoid it being moved.
+This is necessary since the <code>ReadToEnd</code> future holds references to <code>v</code> and to <code>file</code>.
+Internally we need to use <code>unsafe</code> to circumvent the restrictions of <code>!Unpin</code>.
+Here we must be careful not to move any members that another may hold references to.</p>
+<p>The <code>poll</code> implementation checks which state we are in.
+This roughly corresponds to the different entrypoints of the function:</p>
+<ul>
+<li>the main entrypoint of the function</li>
+<li>points where <code>.await</code> is used in the function</li>
+</ul>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="rust"><span class="giallo-l"><span style="color: #F97583;">impl</span><span>&lt;&#39;</span><span style="color: #B392F0;">a</span><span>&gt;</span><span style="color: #B392F0;"> Future</span><span style="color: #F97583;"> for</span><span style="color: #B392F0;"> ReadFileFuture</span><span>&lt;&#39;</span><span style="color: #B392F0;">a</span><span>&gt; {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    type</span><span style="color: #B392F0;"> Output</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> String</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    fn</span><span style="color: #B392F0;"> poll</span><span>&lt;&#39;</span><span style="color: #B392F0;">b</span><span>&gt;(</span><span style="color: #F97583;">mut</span><span style="color: #79B8FF;"> self</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> Pin</span><span>&lt;</span><span style="color: #F97583;">&amp;</span><span>&#39;</span><span style="color: #B392F0;">b</span><span style="color: #F97583;"> mut</span><span style="color: #79B8FF;"> Self</span><span>&gt;, cx</span><span style="color: #F97583;">: &amp;mut</span><span style="color: #B392F0;"> Context</span><span>&lt;&#39;</span><span style="color: #B392F0;">_</span><span>&gt;)</span><span style="color: #F97583;"> -&gt;</span><span style="color: #B392F0;"> Poll</span><span>&lt;</span><span style="color: #79B8FF;">Self</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">Output</span><span>&gt; {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        let</span><span> s</span><span style="color: #F97583;"> = unsafe</span><span> {</span><span style="color: #79B8FF;"> self</span><span style="color: #F97583;">.</span><span style="color: #B392F0;">as_mut</span><span>()</span><span style="color: #F97583;">.</span><span style="color: #B392F0;">get_unchecked_mut</span><span>() };</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        loop</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            match</span><span> s</span><span style="color: #F97583;">.</span><span>state {</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">                // Main entrypoint</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">                ReadFileState</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">State0</span><span style="color: #F97583;"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                    let</span><span> fut</span><span style="color: #F97583;"> =</span><span> s</span><span style="color: #F97583;">.</span><span>file</span><span style="color: #F97583;">.</span><span style="color: #B392F0;">read_to_end</span><span>(s</span><span style="color: #F97583;">.</span><span>v</span><span style="color: #F97583;">.</span><span style="color: #B392F0;">as_mut</span><span>()</span><span style="color: #F97583;">.</span><span style="color: #B392F0;">unwrap</span><span>());</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                    let</span><span> wrapped</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> Box</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">pin</span><span>(fut);</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                    let</span><span> new_state</span><span style="color: #F97583;"> = unsafe</span><span> {</span><span style="color: #B392F0;"> std</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">mem</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">transmute</span><span style="color: #F97583;">::</span><span>&lt;_,</span><span style="color: #B392F0;"> ReadFileState</span><span>&lt;&#39;</span><span style="color: #B392F0;">a</span><span>&gt;&gt;(</span><span style="color: #B392F0;">ReadFileState</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">State1</span><span>(wrapped)) };</span></span>
+<span class="giallo-l"><span>                    s</span><span style="color: #F97583;">.</span><span>state </span><span style="color: #F97583;">=</span><span> new_state;</span></span>
+<span class="giallo-l"><span>                },</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">                // Await ReadToEnd</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">                ReadFileState</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">State1</span><span>(</span><span style="color: #F97583;">ref mut</span><span> fut)</span><span style="color: #F97583;"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                    let</span><span> r</span><span style="color: #F97583;"> =</span><span> fut</span><span style="color: #F97583;">.</span><span style="color: #B392F0;">as_mut</span><span>()</span><span style="color: #F97583;">.</span><span style="color: #B392F0;">poll</span><span>(cx);</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                    if</span><span> r</span><span style="color: #F97583;">.</span><span style="color: #B392F0;">is_pending</span><span>() {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                        return</span><span style="color: #B392F0;"> Poll</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">Pending</span><span>;</span></span>
+<span class="giallo-l"><span>                    }</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                    let</span><span> v</span><span style="color: #F97583;"> =</span><span> s</span><span style="color: #F97583;">.</span><span>v</span><span style="color: #F97583;">.</span><span style="color: #B392F0;">take</span><span>()</span><span style="color: #F97583;">.</span><span style="color: #B392F0;">unwrap</span><span>();</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                    return</span><span style="color: #B392F0;"> Poll</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">Ready</span><span>(</span><span style="color: #B392F0;">String</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">from_utf8</span><span>(v)</span><span style="color: #F97583;">.</span><span style="color: #B392F0;">unwrap</span><span>());</span></span>
+<span class="giallo-l"><span>                },</span></span>
+<span class="giallo-l"><span>            }</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>We can then again simply return an instance of the struct in the desugared function:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="rust"><span class="giallo-l"><span style="color: #F97583;">fn</span><span style="color: #B392F0;"> read_file_desugared</span><span>(file</span><span style="color: #F97583;">: &amp;mut</span><span style="color: #B392F0;"> File</span><span>)</span><span style="color: #F97583;"> -&gt; impl</span><span style="color: #B392F0;"> Future</span><span>&lt;</span><span style="color: #B392F0;">Output</span><span style="color: #F97583;">=</span><span style="color: #B392F0;">String</span><span>&gt;</span><span style="color: #F97583;"> +</span><span> &#39;</span><span style="color: #B392F0;">_</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    ReadFileFuture</span><span> {</span></span>
+<span class="giallo-l"><span>        file,</span></span>
+<span class="giallo-l"><span>        v</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> Some</span><span>(</span><span style="color: #B392F0;">Vec</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">new</span><span>()),</span></span>
+<span class="giallo-l"><span>        state</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> ReadFileState</span><span style="color: #F97583;">::</span><span style="color: #B392F0;">State0</span><span>,</span></span>
+<span class="giallo-l"><span>        _pin</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> PhantomPinned</span><span> {},</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>I am not 100% sure my use of <code>unsafe</code> is sound here, in fact I would be surprised by it.
+However, the application does run and seems to produce the correct result.</p>
+<p>The transmute is used to convince the compiler to accept a different lifetime for <code>ReadFileState</code>.
+This would likely not be necessary if Rust had support for self-referencing structs.</p>
+<h2 id="acknowledgement">Acknowledgement</h2>
+<ul>
+<li><a rel="external" href="https://www.youtube.com/watch?v=9_3krAQtD2k">Jon Gjengset: The What and How of Futures and async/await in Rust</a></li>
+<li><a rel="external" href="https://www.youtube.com/watch?v=DkMwYxfSYNQ">Jon Gjengset: The Why, What, and How of Pinning in Rust</a></li>
+<li><a rel="external" href="https://users.rust-lang.org/t/desugaring-async-fn/63698/2">Yandros</a></li>
+</ul>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                
+                    
+                    in <a href="https://ambiso.github.io/categories/rust/">rust</a>
+                
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+    </body>
+
+</html>
